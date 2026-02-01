@@ -1,0 +1,265 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  nama      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(100)
+  password  String   @db.VarChar(255)
+  noHp      String?  @map("no_hp") @db.VarChar(20)
+  alamat    String?  @db.Text
+  role      String   @default("user") @db.VarChar(50)
+  fotoProfil String? @map("foto_profil") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  feedback        Feedback[]
+  pemesananTiket  PemesananTiket[]
+
+  @@map("users")
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  judul     String   @db.VarChar(200)
+  isi       String   @db.Text
+  gambar    String?  @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  feedback Feedback[]
+
+  @@map("articles")
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  nama      String?  @db.VarChar(100)
+  email     String?  @db.VarChar(100)
+  pesan     String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("contacts")
+}
+
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  artikelId Int?     @map("artikel_id")
+  komentar  String?  @db.Text
+  rating    Int?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  artikel Article? @relation(fields: [artikelId], references: [id], onDelete: SetNull)
+
+  @@map("feedback")
+}
+
+model Galeri {
+  id         Int      @id @default(autoincrement())
+  namaFile   String?  @map("nama_file") @db.VarChar(255)
+  keterangan String?  @db.VarChar(255)
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
+
+  @@map("galeri")
+}
+
+model Wisata {
+  id        Int      @id @default(autoincrement())
+  nama      String?  @db.VarChar(100)
+  deskripsi String?  @db.Text
+  gambar    String?  @db.VarChar(255)
+  lokasi    String?  @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  jenisTiket JenisTiket[]
+
+  @@map("wisata")
+}
+
+model JenisTiket {
+  id                 Int      @id @default(autoincrement())
+  namaLayananDisplay String   @map("nama_layanan_display") @db.VarChar(100)
+  tipeHari           TipeHari @map("tipe_hari")
+  harga              Int
+  deskripsi          String?  @db.Text
+  aktif              Boolean  @default(true)
+  wisataId           Int?     @map("wisata_id")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  wisata                  Wisata?                   @relation(fields: [wisataId], references: [id], onDelete: SetNull)
+  jadwalKetersediaan      JadwalKetersediaanTiket[]
+  detailPemesananTiket    DetailPemesananTiket[]
+
+  @@map("jenis_tiket")
+}
+
+enum TipeHari {
+  HARI_KERJA  @map("Hari Kerja")
+  HARI_LIBUR  @map("Hari Libur")
+  SEMUA_HARI  @map("Semua Hari")
+}
+
+model JadwalKetersediaanTiket {
+  id                      Int      @id @default(autoincrement())
+  jenisTiketId            Int      @map("jenis_tiket_id")
+  tanggal                 DateTime @db.Date
+  jumlahTotalTersedia     Int      @map("jumlah_total_tersedia")
+  jumlahSaatIniTersedia   Int      @map("jumlah_saat_ini_tersedia")
+  aktif                   Boolean  @default(true)
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+
+  jenisTiket JenisTiket @relation(fields: [jenisTiketId], references: [id], onDelete: Cascade)
+
+  @@unique([jenisTiketId, tanggal], name: "idx_unik_ketersediaan")
+  @@map("jadwal_ketersediaan_tiket")
+}
+
+model PemesananTiket {
+  id                   Int                @id @default(autoincrement())
+  userId               Int?               @map("user_id")
+  namaPemesanTamu      String?            @map("nama_pemesan_tamu") @db.VarChar(255)
+  emailPemesanTamu     String?            @map("email_pemesan_tamu") @db.VarChar(255)
+  nohpPemesanTamu      String?            @map("nohp_pemesan_tamu") @db.VarChar(20)
+  kodePemesanan        String             @unique @map("kode_pemesanan") @db.VarChar(50)
+  tanggalKunjungan     DateTime           @map("tanggal_kunjungan") @db.Date
+  totalHargaAkhir      Decimal            @default(0) @map("total_harga_akhir") @db.Decimal(10, 2)
+  status               StatusPemesanan    @default(PENDING)
+  catatanUmumPemesanan String?            @map("catatan_umum_pemesanan") @db.Text
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+
+  user                 User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  pembayaran           Pembayaran?
+  detailPemesanan      DetailPemesananTiket[]
+  pemesananSewaAlat    PemesananSewaAlat[]
+
+  @@map("pemesanan_tiket")
+}
+
+enum StatusPemesanan {
+  PENDING         @map("pending")
+  WAITING_PAYMENT @map("waiting_payment")
+  PAID            @map("paid")
+  CONFIRMED       @map("confirmed")
+  COMPLETED       @map("completed")
+  CANCELLED       @map("cancelled")
+  EXPIRED         @map("expired")
+}
+
+model DetailPemesananTiket {
+  id                   Int      @id @default(autoincrement())
+  pemesananTiketId     Int      @map("pemesanan_tiket_id")
+  jenisTiketId         Int      @map("jenis_tiket_id")
+  jumlah               Int
+  hargaSatuanSaatPesan Int      @map("harga_satuan_saat_pesan")
+  subtotalItem         Int      @map("subtotal_item")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  pemesananTiket PemesananTiket @relation(fields: [pemesananTiketId], references: [id], onDelete: Cascade)
+  jenisTiket     JenisTiket     @relation(fields: [jenisTiketId], references: [id])
+
+  @@map("detail_pemesanan_tiket")
+}
+
+model Pembayaran {
+  id                  Int              @id @default(autoincrement())
+  pemesananTiketId    Int              @unique @map("pemesanan_tiket_id")
+  metodePembayaran    String?          @map("metode_pembayaran") @db.VarChar(100)
+  jumlahDibayar       Decimal          @default(0) @map("jumlah_dibayar") @db.Decimal(10, 2)
+  waktuPembayaran     DateTime?        @map("waktu_pembayaran")
+  statusPembayaran    StatusPembayaran @default(PENDING) @map("status_pembayaran")
+  buktiPembayaran     String?          @map("bukti_pembayaran") @db.VarChar(255)
+  idTransaksiGateway  String?          @map("id_transaksi_gateway") @db.VarChar(255)
+  nomorVirtualAccount String?          @map("nomor_virtual_account") @db.VarChar(100)
+  createdAt           DateTime         @default(now()) @map("created_at")
+  updatedAt           DateTime         @updatedAt @map("updated_at")
+
+  pemesananTiket PemesananTiket @relation(fields: [pemesananTiketId], references: [id], onDelete: Cascade)
+
+  @@map("pembayaran")
+}
+
+enum StatusPembayaran {
+  PENDING               @map("pending")
+  SUCCESS               @map("success")
+  FAILED                @map("failed")
+  EXPIRED               @map("expired")
+  REFUNDED              @map("refunded")
+  AWAITING_CONFIRMATION @map("awaiting_confirmation")
+}
+
+model SewaAlat {
+  id                 Int            @id @default(autoincrement())
+  namaItem           String         @map("nama_item") @db.VarChar(255)
+  kategoriAlat       String?        @map("kategori_alat") @db.VarChar(100)
+  deskripsi          String?        @db.Text
+  hargaSewa          Int            @map("harga_sewa")
+  durasiHargaSewa    Int            @default(1) @map("durasi_harga_sewa")
+  satuanDurasiHarga  SatuanDurasi   @default(HARI) @map("satuan_durasi_harga")
+  stokTersedia       Int            @default(0) @map("stok_tersedia")
+  gambarAlat         String?        @map("gambar_alat") @db.VarChar(255)
+  kondisiAlat        KondisiAlat    @default(BAIK) @map("kondisi_alat")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+
+  pemesananSewaAlat PemesananSewaAlat[]
+
+  @@map("sewa_alat")
+}
+
+enum SatuanDurasi {
+  JAM         @map("Jam")
+  HARI        @map("Hari")
+  PEMINJAMAN  @map("Peminjaman")
+}
+
+enum KondisiAlat {
+  BAIK           @map("Baik")
+  RUSAK_RINGAN   @map("Rusak Ringan")
+  PERLU_PERBAIKAN @map("Perlu Perbaikan")
+  HILANG         @map("Hilang")
+}
+
+model PemesananSewaAlat {
+  id                       Int            @id @default(autoincrement())
+  pemesananTiketId         Int            @map("pemesanan_tiket_id")
+  sewaAlatId               Int            @map("sewa_alat_id")
+  jumlah                   Int            @default(1)
+  hargaSatuanSaatPesan     Decimal        @map("harga_satuan_saat_pesan") @db.Decimal(10, 2)
+  durasiSatuanSaatPesan    Int            @map("durasi_satuan_saat_pesan")
+  satuanDurasiSaatPesan    SatuanDurasi   @map("satuan_durasi_saat_pesan")
+  tanggalMulaiSewa         DateTime       @map("tanggal_mulai_sewa")
+  tanggalAkhirSewaRencana  DateTime       @map("tanggal_akhir_sewa_rencana")
+  totalHargaItem           Decimal        @map("total_harga_item") @db.Decimal(10, 2)
+  statusItemSewa           StatusItemSewa @default(DIPESAN) @map("status_item_sewa")
+  catatanItemSewa          String?        @map("catatan_item_sewa") @db.Text
+  denda                    Decimal        @default(0) @db.Decimal(10, 2)
+  createdAt                DateTime       @default(now()) @map("created_at")
+  updatedAt                DateTime       @updatedAt @map("updated_at")
+
+  pemesananTiket PemesananTiket @relation(fields: [pemesananTiketId], references: [id], onDelete: Cascade)
+  sewaAlat       SewaAlat       @relation(fields: [sewaAlatId], references: [id])
+
+  @@map("pemesanan_sewa_alat")
+}
+
+enum StatusItemSewa {
+  DIPESAN      @map("Dipesan")
+  DIAMBIL      @map("Diambil")
+  DIKEMBALIKAN @map("Dikembalikan")
+  HILANG       @map("Hilang")
+  RUSAK        @map("Rusak")
+  DIBATALKAN   @map("Dibatalkan")
+}

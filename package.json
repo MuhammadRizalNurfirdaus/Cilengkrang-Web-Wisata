@@ -1,0 +1,13 @@
+{
+    "name": "cilengkrang-web-wisata",
+    "version": "1.0.0",
+    "description": "Root package for Cilengkrang Web Wisata",
+    "scripts": {
+        "dev:backend": "cd backend && bun run dev",
+        "dev:frontend": "cd frontend && npm run dev",
+        "dev:all": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}
