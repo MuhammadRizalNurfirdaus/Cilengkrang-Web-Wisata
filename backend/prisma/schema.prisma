@@ -7,23 +7,24 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  nama      String   @db.VarChar(100)
-  email     String   @unique @db.VarChar(100)
-  password  String   @db.VarChar(255)
-  noHp      String?  @map("no_hp") @db.VarChar(20)
-  alamat    String?  @db.Text
-  role      String   @default("user") @db.VarChar(50)
-  fotoProfil String? @map("foto_profil") @db.VarChar(255)
-  createdAt DateTime @default(now()) @map("created_at")
+  id         Int      @id @default(autoincrement())
+  nama       String   @db.VarChar(100)
+  email      String   @unique @db.VarChar(100)
+  password   String   @db.VarChar(255)
+  noHp       String?  @map("no_hp") @db.VarChar(20)
+  alamat     String?  @db.Text
+  role       String   @default("user") @db.VarChar(50)
+  fotoProfil String?  @map("foto_profil") @db.VarChar(255)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
-  feedback        Feedback[]
-  pemesananTiket  PemesananTiket[]
+  feedback       Feedback[]
+  pemesananTiket PemesananTiket[]
 
   @@map("users")
 }
@@ -31,9 +32,14 @@ model User {
 model Article {
   id        Int      @id @default(autoincrement())
   judul     String   @db.VarChar(200)
+  slug      String   @unique @db.VarChar(250)
   isi       String   @db.Text
+  ringkasan String?  @db.VarChar(500)
   gambar    String?  @db.VarChar(255)
+  penulis   String?  @db.VarChar(100)
+  published Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   feedback Feedback[]
 
@@ -42,9 +48,11 @@ model Article {
 
 model Contact {
   id        Int      @id @default(autoincrement())
-  nama      String?  @db.VarChar(100)
-  email     String?  @db.VarChar(100)
-  pesan     String?  @db.Text
+  nama      String   @db.VarChar(100)
+  email     String   @db.VarChar(100)
+  subjek    String?  @db.VarChar(200)
+  pesan     String   @db.Text
+  dibaca    Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("contacts")
@@ -54,34 +62,50 @@ model Feedback {
   id        Int      @id @default(autoincrement())
   userId    Int?     @map("user_id")
   artikelId Int?     @map("artikel_id")
+  wisataId  Int?     @map("wisata_id")
   komentar  String?  @db.Text
-  rating    Int?
+  rating    Int?     @db.SmallInt
   createdAt DateTime @default(now()) @map("created_at")
 
   user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   artikel Article? @relation(fields: [artikelId], references: [id], onDelete: SetNull)
+  wisata  Wisata?  @relation(fields: [wisataId], references: [id], onDelete: SetNull)
 
   @@map("feedback")
 }
 
 model Galeri {
   id         Int      @id @default(autoincrement())
-  namaFile   String?  @map("nama_file") @db.VarChar(255)
-  keterangan String?  @db.VarChar(255)
+  namaFile   String   @map("nama_file") @db.VarChar(255)
+  judul      String?  @db.VarChar(200)
+  keterangan String?  @db.Text
+  kategori   String?  @db.VarChar(100)
+  wisataId   Int?     @map("wisata_id")
   uploadedAt DateTime @default(now()) @map("uploaded_at")
+
+  wisata Wisata? @relation(fields: [wisataId], references: [id], onDelete: SetNull)
 
   @@map("galeri")
 }
 
 model Wisata {
-  id        Int      @id @default(autoincrement())
-  nama      String?  @db.VarChar(100)
-  deskripsi String?  @db.Text
-  gambar    String?  @db.VarChar(255)
-  lokasi    String?  @db.VarChar(255)
-  createdAt DateTime @default(now()) @map("created_at")
+  id         Int      @id @default(autoincrement())
+  nama       String   @db.VarChar(100)
+  slug       String   @unique @db.VarChar(150)
+  deskripsi  String?  @db.Text
+  gambar     String?  @db.VarChar(255)
+  lokasi     String?  @db.VarChar(255)
+  latitude   Decimal? @db.Decimal(10, 8)
+  longitude  Decimal? @db.Decimal(11, 8)
+  fasilitas  String?  @db.Text
+  jamOperasi String?  @map("jam_operasi") @db.VarChar(255)
+  aktif      Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   jenisTiket JenisTiket[]
+  galeri     Galeri[]
+  feedback   Feedback[]
 
   @@map("wisata")
 }
@@ -97,28 +121,28 @@ model JenisTiket {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
-  wisata                  Wisata?                   @relation(fields: [wisataId], references: [id], onDelete: SetNull)
-  jadwalKetersediaan      JadwalKetersediaanTiket[]
-  detailPemesananTiket    DetailPemesananTiket[]
+  wisata               Wisata?                   @relation(fields: [wisataId], references: [id], onDelete: SetNull)
+  jadwalKetersediaan   JadwalKetersediaanTiket[]
+  detailPemesananTiket DetailPemesananTiket[]
 
   @@map("jenis_tiket")
 }
 
 enum TipeHari {
-  HARI_KERJA  @map("Hari Kerja")
-  HARI_LIBUR  @map("Hari Libur")
-  SEMUA_HARI  @map("Semua Hari")
+  HARI_KERJA @map("Hari Kerja")
+  HARI_LIBUR @map("Hari Libur")
+  SEMUA_HARI @map("Semua Hari")
 }
 
 model JadwalKetersediaanTiket {
-  id                      Int      @id @default(autoincrement())
-  jenisTiketId            Int      @map("jenis_tiket_id")
-  tanggal                 DateTime @db.Date
-  jumlahTotalTersedia     Int      @map("jumlah_total_tersedia")
-  jumlahSaatIniTersedia   Int      @map("jumlah_saat_ini_tersedia")
-  aktif                   Boolean  @default(true)
-  createdAt               DateTime @default(now()) @map("created_at")
-  updatedAt               DateTime @updatedAt @map("updated_at")
+  id                    Int      @id @default(autoincrement())
+  jenisTiketId          Int      @map("jenis_tiket_id")
+  tanggal               DateTime @db.Date
+  jumlahTotalTersedia   Int      @map("jumlah_total_tersedia")
+  jumlahSaatIniTersedia Int      @map("jumlah_saat_ini_tersedia")
+  aktif                 Boolean  @default(true)
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
 
   jenisTiket JenisTiket @relation(fields: [jenisTiketId], references: [id], onDelete: Cascade)
 
@@ -127,23 +151,23 @@ model JadwalKetersediaanTiket {
 }
 
 model PemesananTiket {
-  id                   Int                @id @default(autoincrement())
-  userId               Int?               @map("user_id")
-  namaPemesanTamu      String?            @map("nama_pemesan_tamu") @db.VarChar(255)
-  emailPemesanTamu     String?            @map("email_pemesan_tamu") @db.VarChar(255)
-  nohpPemesanTamu      String?            @map("nohp_pemesan_tamu") @db.VarChar(20)
-  kodePemesanan        String             @unique @map("kode_pemesanan") @db.VarChar(50)
-  tanggalKunjungan     DateTime           @map("tanggal_kunjungan") @db.Date
-  totalHargaAkhir      Decimal            @default(0) @map("total_harga_akhir") @db.Decimal(10, 2)
-  status               StatusPemesanan    @default(PENDING)
-  catatanUmumPemesanan String?            @map("catatan_umum_pemesanan") @db.Text
-  createdAt            DateTime           @default(now()) @map("created_at")
-  updatedAt            DateTime           @updatedAt @map("updated_at")
+  id                   Int             @id @default(autoincrement())
+  userId               Int?            @map("user_id")
+  namaPemesanTamu      String?         @map("nama_pemesan_tamu") @db.VarChar(255)
+  emailPemesanTamu     String?         @map("email_pemesan_tamu") @db.VarChar(255)
+  nohpPemesanTamu      String?         @map("nohp_pemesan_tamu") @db.VarChar(20)
+  kodePemesanan        String          @unique @map("kode_pemesanan") @db.VarChar(50)
+  tanggalKunjungan     DateTime        @map("tanggal_kunjungan") @db.Date
+  totalHargaAkhir      Decimal         @default(0) @map("total_harga_akhir") @db.Decimal(12, 2)
+  status               StatusPemesanan @default(PENDING)
+  catatanUmumPemesanan String?         @map("catatan_umum_pemesanan") @db.Text
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
 
-  user                 User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
-  pembayaran           Pembayaran?
-  detailPemesanan      DetailPemesananTiket[]
-  pemesananSewaAlat    PemesananSewaAlat[]
+  user              User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  pembayaran        Pembayaran?
+  detailPemesanan   DetailPemesananTiket[]
+  pemesananSewaAlat PemesananSewaAlat[]
 
   @@map("pemesanan_tiket")
 }
@@ -177,7 +201,7 @@ model Pembayaran {
   id                  Int              @id @default(autoincrement())
   pemesananTiketId    Int              @unique @map("pemesanan_tiket_id")
   metodePembayaran    String?          @map("metode_pembayaran") @db.VarChar(100)
-  jumlahDibayar       Decimal          @default(0) @map("jumlah_dibayar") @db.Decimal(10, 2)
+  jumlahDibayar       Decimal          @default(0) @map("jumlah_dibayar") @db.Decimal(12, 2)
   waktuPembayaran     DateTime?        @map("waktu_pembayaran")
   statusPembayaran    StatusPembayaran @default(PENDING) @map("status_pembayaran")
   buktiPembayaran     String?          @map("bukti_pembayaran") @db.VarChar(255)
@@ -201,18 +225,19 @@ enum StatusPembayaran {
 }
 
 model SewaAlat {
-  id                 Int            @id @default(autoincrement())
-  namaItem           String         @map("nama_item") @db.VarChar(255)
-  kategoriAlat       String?        @map("kategori_alat") @db.VarChar(100)
-  deskripsi          String?        @db.Text
-  hargaSewa          Int            @map("harga_sewa")
-  durasiHargaSewa    Int            @default(1) @map("durasi_harga_sewa")
-  satuanDurasiHarga  SatuanDurasi   @default(HARI) @map("satuan_durasi_harga")
-  stokTersedia       Int            @default(0) @map("stok_tersedia")
-  gambarAlat         String?        @map("gambar_alat") @db.VarChar(255)
-  kondisiAlat        KondisiAlat    @default(BAIK) @map("kondisi_alat")
-  createdAt          DateTime       @default(now()) @map("created_at")
-  updatedAt          DateTime       @updatedAt @map("updated_at")
+  id                Int          @id @default(autoincrement())
+  namaItem          String       @map("nama_item") @db.VarChar(255)
+  kategoriAlat      String?      @map("kategori_alat") @db.VarChar(100)
+  deskripsi         String?      @db.Text
+  hargaSewa         Int          @map("harga_sewa")
+  durasiHargaSewa   Int          @default(1) @map("durasi_harga_sewa")
+  satuanDurasiHarga SatuanDurasi @default(HARI) @map("satuan_durasi_harga")
+  stokTersedia      Int          @default(0) @map("stok_tersedia")
+  gambarAlat        String?      @map("gambar_alat") @db.VarChar(255)
+  kondisiAlat       KondisiAlat  @default(BAIK) @map("kondisi_alat")
+  aktif             Boolean      @default(true)
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
 
   pemesananSewaAlat PemesananSewaAlat[]
 
@@ -220,34 +245,34 @@ model SewaAlat {
 }
 
 enum SatuanDurasi {
-  JAM         @map("Jam")
-  HARI        @map("Hari")
-  PEMINJAMAN  @map("Peminjaman")
+  JAM        @map("Jam")
+  HARI       @map("Hari")
+  PEMINJAMAN @map("Peminjaman")
 }
 
 enum KondisiAlat {
-  BAIK           @map("Baik")
-  RUSAK_RINGAN   @map("Rusak Ringan")
+  BAIK            @map("Baik")
+  RUSAK_RINGAN    @map("Rusak Ringan")
   PERLU_PERBAIKAN @map("Perlu Perbaikan")
-  HILANG         @map("Hilang")
+  HILANG          @map("Hilang")
 }
 
 model PemesananSewaAlat {
-  id                       Int            @id @default(autoincrement())
-  pemesananTiketId         Int            @map("pemesanan_tiket_id")
-  sewaAlatId               Int            @map("sewa_alat_id")
-  jumlah                   Int            @default(1)
-  hargaSatuanSaatPesan     Decimal        @map("harga_satuan_saat_pesan") @db.Decimal(10, 2)
-  durasiSatuanSaatPesan    Int            @map("durasi_satuan_saat_pesan")
-  satuanDurasiSaatPesan    SatuanDurasi   @map("satuan_durasi_saat_pesan")
-  tanggalMulaiSewa         DateTime       @map("tanggal_mulai_sewa")
-  tanggalAkhirSewaRencana  DateTime       @map("tanggal_akhir_sewa_rencana")
-  totalHargaItem           Decimal        @map("total_harga_item") @db.Decimal(10, 2)
-  statusItemSewa           StatusItemSewa @default(DIPESAN) @map("status_item_sewa")
-  catatanItemSewa          String?        @map("catatan_item_sewa") @db.Text
-  denda                    Decimal        @default(0) @db.Decimal(10, 2)
-  createdAt                DateTime       @default(now()) @map("created_at")
-  updatedAt                DateTime       @updatedAt @map("updated_at")
+  id                      Int            @id @default(autoincrement())
+  pemesananTiketId        Int            @map("pemesanan_tiket_id")
+  sewaAlatId              Int            @map("sewa_alat_id")
+  jumlah                  Int            @default(1)
+  hargaSatuanSaatPesan    Decimal        @map("harga_satuan_saat_pesan") @db.Decimal(12, 2)
+  durasiSatuanSaatPesan   Int            @map("durasi_satuan_saat_pesan")
+  satuanDurasiSaatPesan   SatuanDurasi   @map("satuan_durasi_saat_pesan")
+  tanggalMulaiSewa        DateTime       @map("tanggal_mulai_sewa") @db.Date
+  tanggalAkhirSewaRencana DateTime       @map("tanggal_akhir_sewa_rencana") @db.Date
+  totalHargaItem          Decimal        @map("total_harga_item") @db.Decimal(12, 2)
+  statusItemSewa          StatusItemSewa @default(DIPESAN) @map("status_item_sewa")
+  catatanItemSewa         String?        @map("catatan_item_sewa") @db.Text
+  denda                   Decimal        @default(0) @db.Decimal(12, 2)
+  createdAt               DateTime       @default(now()) @map("created_at")
+  updatedAt               DateTime       @updatedAt @map("updated_at")
 
   pemesananTiket PemesananTiket @relation(fields: [pemesananTiketId], references: [id], onDelete: Cascade)
   sewaAlat       SewaAlat       @relation(fields: [sewaAlatId], references: [id])
@@ -262,4 +287,27 @@ enum StatusItemSewa {
   HILANG       @map("Hilang")
   RUSAK        @map("Rusak")
   DIBATALKAN   @map("Dibatalkan")
+}
+
+model PengaturanSitus {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique @db.VarChar(100)
+  value     String?  @db.Text
+  deskripsi String?  @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("pengaturan_situs")
+}
+
+model Aktivitas {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  aksi      String   @db.VarChar(100)
+  detail    String?  @db.Text
+  ipAddress String?  @map("ip_address") @db.VarChar(45)
+  userAgent String?  @map("user_agent") @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("aktivitas")
 }

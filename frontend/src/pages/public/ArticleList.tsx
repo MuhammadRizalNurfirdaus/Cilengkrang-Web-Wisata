@@ -45,10 +45,12 @@ export default function ArticleList() {
                                     <Card
                                         image={article.gambar}
                                         title={article.judul}
+                                        description={article.ringkasan || undefined}
                                         subtitle={formatDate(article.createdAt || "")}
-                                        linkTo={`/articles/${article.id}`}
+                                        badge={article.penulis || undefined}
+                                        linkTo={`/articles/${article.slug || article.id}`}
                                         linkText="Baca Selengkapnya"
-                                        className="border-0 shadow-sm"
+                                        className="border-0 shadow-sm h-100"
                                     />
                                 </div>
                             ))}

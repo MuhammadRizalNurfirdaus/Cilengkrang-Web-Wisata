@@ -31,10 +31,15 @@ export default function Login() {
                 login(response.data.token, response.data.user);
 
                 // Redirect based on role
-                if (response.data.user.role === "admin") {
+                const role = response.data.user.role;
+                if (role === "admin") {
                     navigate("/admin/dashboard");
+                } else if (role === "kasir") {
+                    navigate("/kasir/dashboard");
+                } else if (role === "owner") {
+                    navigate("/owner/dashboard");
                 } else {
-                    navigate("/");
+                    navigate("/user/dashboard");
                 }
             } else {
                 setError(response.message || "Login gagal");

@@ -7,6 +7,7 @@ export interface User {
     alamat?: string | null;
     fotoProfil?: string | null;
     createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface AuthResponse {
@@ -33,19 +34,34 @@ export interface ApiResponse<T> {
 export interface Article {
     id: number;
     judul: string;
+    slug: string;
     isi: string;
+    ringkasan?: string | null;
     gambar?: string | null;
+    penulis?: string | null;
+    published: boolean;
     createdAt: string;
+    updatedAt?: string;
+    feedback?: Feedback[];
 }
 
 export interface Wisata {
     id: number;
     nama: string;
+    slug: string;
     deskripsi?: string | null;
     gambar?: string | null;
     lokasi?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    fasilitas?: string | null;
+    jamOperasi?: string | null;
+    aktif: boolean;
     createdAt: string;
+    updatedAt?: string;
     jenisTiket?: JenisTiket[];
+    galeri?: Galeri[];
+    feedback?: Feedback[];
 }
 
 export interface JenisTiket {
@@ -62,26 +78,34 @@ export interface JenisTiket {
 export interface Galeri {
     id: number;
     namaFile: string;
+    judul?: string | null;
     keterangan?: string | null;
+    kategori?: string | null;
+    wisataId?: number | null;
     uploadedAt: string;
+    wisata?: Wisata;
 }
 
 export interface Feedback {
     id: number;
     userId?: number | null;
     artikelId?: number | null;
+    wisataId?: number | null;
     komentar: string;
     rating?: number | null;
     createdAt: string;
     user?: User;
     artikel?: Article;
+    wisata?: Wisata;
 }
 
 export interface Contact {
     id: number;
     nama: string;
     email: string;
+    subjek?: string | null;
     pesan: string;
+    dibaca: boolean;
     createdAt: string;
 }
 

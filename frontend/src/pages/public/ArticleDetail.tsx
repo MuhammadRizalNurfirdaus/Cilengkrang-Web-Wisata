@@ -5,7 +5,11 @@ import { getImageUrl } from "../../api/client";
 
 export default function ArticleDetail() {
     const { id } = useParams<{ id: string }>();
-    const { data: article, loading } = useFetch<Article>(`/articles/${id}`);
+    
+    // Check if id is a slug (contains letters) or numeric ID
+    const isSlug = id && isNaN(Number(id));
+    const endpoint = isSlug ? `/articles/slug/${id}` : `/articles/${id}`;
+    const { data: article, loading } = useFetch<Article>(endpoint);
 
     if (loading) {
         return (
@@ -35,15 +39,26 @@ export default function ArticleDetail() {
             <div className="bg-light py-5">
                 <div className="container">
                     <h1 className="fw-bold display-5 mb-3">{article.judul}</h1>
-                    <div className="d-flex align-items-center text-muted">
-                        <i className="fas fa-calendar-alt me-2"></i>
-                        {new Date(article.createdAt).toLocaleDateString("id-ID", {
-                            weekday: "long",
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric"
-                        })}
+                    <div className="d-flex flex-wrap align-items-center gap-3 text-muted">
+                        <span>
+                            <i className="fas fa-calendar-alt me-2"></i>
+                            {new Date(article.createdAt).toLocaleDateString("id-ID", {
+                                weekday: "long",
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            })}
+                        </span>
+                        {article.penulis && (
+                            <span>
+                                <i className="fas fa-user me-2"></i>
+                                {article.penulis}
+                            </span>
+                        )}
                     </div>
+                    {article.ringkasan && (
+                        <p className="lead mt-3 text-muted">{article.ringkasan}</p>
+                    )}
                 </div>
             </div>
 

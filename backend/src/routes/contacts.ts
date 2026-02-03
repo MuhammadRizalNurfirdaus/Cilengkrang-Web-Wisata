@@ -52,6 +52,7 @@ export const contactsRoutes = new Elysia({ prefix: "/contacts" })
                     data: {
                         nama: body.nama,
                         email: body.email,
+                        subjek: body.subjek,
                         pesan: body.pesan,
                     },
                 });
@@ -68,6 +69,7 @@ export const contactsRoutes = new Elysia({ prefix: "/contacts" })
             body: t.Object({
                 nama: t.String({ minLength: 1 }),
                 email: t.String({ format: "email" }),
+                subjek: t.Optional(t.String()),
                 pesan: t.String({ minLength: 1 }),
             }),
         }

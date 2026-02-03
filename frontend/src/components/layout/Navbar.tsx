@@ -100,30 +100,72 @@ export default function Navbar() {
                                 <ul className="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <h6 className="dropdown-header">Halo, {user.nama}</h6>
+                                        <small className="dropdown-header text-muted text-capitalize">{user.role}</small>
                                     </li>
-                                    {user.role === "admin" ? (
+                                    <li><hr className="dropdown-divider" /></li>
+                                    
+                                    {/* Admin Menu */}
+                                    {user.role === "admin" && (
                                         <li>
                                             <Link className="dropdown-item" to="/admin/dashboard">
-                                                <i className="fas fa-gauge-high me-2"></i> Dashboard Admin
-                                            </Link>
-                                        </li>
-                                    ) : (
-                                        <li>
-                                            <Link className="dropdown-item" to="/user/dashboard">
-                                                <i className="fas fa-gauge-high me-2"></i> Dashboard Saya
+                                                <i className="fas fa-gauge-high me-2 text-primary"></i> Dashboard Admin
                                             </Link>
                                         </li>
                                     )}
+                                    
+                                    {/* Kasir Menu */}
+                                    {user.role === "kasir" && (
+                                        <>
+                                            <li>
+                                                <Link className="dropdown-item" to="/kasir/dashboard">
+                                                    <i className="fas fa-cash-register me-2 text-info"></i> Dashboard Kasir
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link className="dropdown-item" to="/kasir/pemesanan">
+                                                    <i className="fas fa-ticket-alt me-2 text-success"></i> Kelola Pemesanan
+                                                </Link>
+                                            </li>
+                                        </>
+                                    )}
+                                    
+                                    {/* Owner Menu */}
+                                    {user.role === "owner" && (
+                                        <>
+                                            <li>
+                                                <Link className="dropdown-item" to="/owner/dashboard">
+                                                    <i className="fas fa-chart-line me-2 text-warning"></i> Dashboard Owner
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link className="dropdown-item" to="/owner/laporan">
+                                                    <i className="fas fa-file-invoice-dollar me-2 text-success"></i> Laporan Pendapatan
+                                                </Link>
+                                            </li>
+                                        </>
+                                    )}
+                                    
+                                    {/* User Menu */}
+                                    {user.role === "user" && (
+                                        <li>
+                                            <Link className="dropdown-item" to="/user/dashboard">
+                                                <i className="fas fa-gauge-high me-2 text-success"></i> Dashboard Saya
+                                            </Link>
+                                        </li>
+                                    )}
+                                    
                                     <li>
                                         <Link className="dropdown-item" to="/user/profile">
                                             <i className="fas fa-user-circle me-2"></i> Edit Profil
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link className="dropdown-item" to="/user/history">
-                                            <i className="fas fa-history me-2"></i> Riwayat Tiket
-                                        </Link>
-                                    </li>
+                                    {(user.role === "user" || user.role === "admin") && (
+                                        <li>
+                                            <Link className="dropdown-item" to="/user/history">
+                                                <i className="fas fa-history me-2"></i> Riwayat Tiket
+                                            </Link>
+                                        </li>
+                                    )}
                                     <li><hr className="dropdown-divider" /></li>
                                     <li>
                                         <button className="dropdown-item text-danger" onClick={logout}>

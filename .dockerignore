@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Environment files (keep .env.example)
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Database
+*.sql.backup
+postgres_data/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+
+# Legacy PHP (optional to exclude)
+# legacy_php/
+
+# Temporary files
+*.tmp
+*.temp

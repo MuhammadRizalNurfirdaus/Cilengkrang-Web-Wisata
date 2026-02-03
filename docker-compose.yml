@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cilengkrang_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-cilengkrang_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-cilengkrang_password}
+      POSTGRES_DB: ${DB_NAME:-cilengkrang_web_wisata}
+    ports:
+      - "5434:5432"
+    volumes:
+      - cilengkrang_postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - cilengkrang_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-cilengkrang_user} -d ${DB_NAME:-cilengkrang_web_wisata}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    container_name: cilengkrang_adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    networks:
+      - cilengkrang_network
+    depends_on:
+      - postgres
+
+volumes:
+  cilengkrang_postgres_data:
+
+networks:
+  cilengkrang_network:
+    driver: bridge

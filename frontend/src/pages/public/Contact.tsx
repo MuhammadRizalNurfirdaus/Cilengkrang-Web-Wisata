@@ -8,6 +8,7 @@ export default function Contact() {
     const [formData, setFormData] = useState({
         nama: "",
         email: "",
+        subjek: "",
         pesan: "",
     });
     const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function Contact() {
                 body: JSON.stringify(formData),
             });
             setStatus({ type: "success", message: "Pesan Anda telah terkirim! Terima kasih telah menghubungi kami." });
-            setFormData({ nama: "", email: "", pesan: "" });
+            setFormData({ nama: "", email: "", subjek: "", pesan: "" });
         } catch (err: any) {
             setStatus({ type: "danger", message: err.message || "Gagal mengirim pesan." });
         } finally {
@@ -108,6 +109,14 @@ export default function Contact() {
                                     </div>
                                 </div>
 
+                                <Input
+                                    label="Subjek"
+                                    id="subjek"
+                                    value={formData.subjek}
+                                    onChange={(e) => setFormData({ ...formData, subjek: e.target.value })}
+                                    placeholder="Apa yang ingin Anda tanyakan?"
+                                />
+
                                 <div className="mb-4">
                                     <label htmlFor="pesan" className="form-label small fw-medium text-black-50 uppercase tracking-wide">Pesan</label>
                                     <textarea
@@ -117,6 +126,7 @@ export default function Contact() {
                                         value={formData.pesan}
                                         onChange={(e) => setFormData({ ...formData, pesan: e.target.value })}
                                         required
+                                        placeholder="Tulis pesan Anda di sini..."
                                     ></textarea>
                                 </div>
 

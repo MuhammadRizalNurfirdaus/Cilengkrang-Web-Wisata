@@ -37,9 +37,10 @@ export default function AllDestinations() {
                                     <Card
                                         image={wisata.gambar}
                                         title={wisata.nama}
-                                        description={wisata.deskripsi || ""}
-                                        linkTo={`/destinations/${wisata.id}`}
-                                        className="border-0 shadow-sm"
+                                        description={wisata.deskripsi || "Destinasi wisata alam yang indah"}
+                                        badge={wisata.lokasi || undefined}
+                                        linkTo={`/destinations/${wisata.slug || wisata.id}`}
+                                        className="border-0 shadow-sm h-100"
                                     />
                                 </div>
                             ))}

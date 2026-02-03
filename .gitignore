@@ -26,26 +26,34 @@ Desktop.ini
 *.sublime-project
 *.sublime-workspace
 
-# Composer & PHP dependencies
-/vendor/
-/composer.lock
-
-# File environment atau konfigurasi lokal
-.env
-.env.local
-.env.*
-
-# Direktori XAMPP (jika ada path absolut disertakan)
-C:/xampp/
-
-# Node (jika ada frontend modern)
+# Node dependencies
 node_modules/
 
-# File upload temporer (misalnya untuk development)
-uploads/
-storage/
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Docker volumes
+postgres_data/
+
+# Prisma
+backend/.prisma/
+
+# File upload (keep structure)
+backend/uploads/*
+!backend/uploads/.gitkeep
+frontend/public/uploads/*
+!frontend/public/uploads/.gitkeep
+
+# Legacy PHP (keep for reference)
+# /legacy_php/
+
+# Temporary files
 *.zip
 *.tar.gz
-
-# File khusus proyek kamu
-logs/php_error_dev.log

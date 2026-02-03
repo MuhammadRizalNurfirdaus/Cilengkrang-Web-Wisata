@@ -1,13 +1,24 @@
 {
     "name": "cilengkrang-web-wisata",
-    "version": "1.0.0",
-    "description": "Root package for Cilengkrang Web Wisata",
+    "version": "2.0.0",
+    "description": "Aplikasi Web Wisata Cilengkrang - TypeScript, React, Elysia, PostgreSQL",
     "scripts": {
         "dev:backend": "cd backend && bun run dev",
         "dev:frontend": "cd frontend && npm run dev",
-        "dev:all": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+        "dev:all": "npx concurrently -n \"API,WEB\" -c \"green,blue\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "docker:up": "docker-compose up -d",
+        "docker:down": "docker-compose down",
+        "docker:logs": "docker-compose logs -f",
+        "prisma:generate": "cd backend && bun prisma generate",
+        "prisma:push": "cd backend && bun prisma db push",
+        "prisma:studio": "cd backend && bun prisma studio",
+        "setup": "npm run docker:up && sleep 3 && npm run prisma:generate && npm run prisma:push",
+        "build:frontend": "cd frontend && npm run build"
     },
     "devDependencies": {
         "concurrently": "^8.2.2"
-    }
+    },
+    "keywords": ["wisata", "cilengkrang", "react", "typescript", "elysia", "postgresql"],
+    "author": "Muhammad Rizal Nurfirdaus",
+    "license": "MIT"
 }
