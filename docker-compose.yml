@@ -1,41 +1,78 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:16-alpine
+  # Database Service (MariaDB)
+  db:
+    image: mariadb:10.11
     container_name: cilengkrang_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:-cilengkrang_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-cilengkrang_password}
-      POSTGRES_DB: ${DB_NAME:-cilengkrang_web_wisata}
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: cilengkrang_web_wisata_ts
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
-      - "5434:5432"
+      - "3307:3306"
     volumes:
-      - cilengkrang_postgres_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - db_data:/var/lib/mysql
     networks:
-      - cilengkrang_network
+      - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-cilengkrang_user} -d ${DB_NAME:-cilengkrang_web_wisata}"]
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -prootpassword"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  adminer:
-    image: adminer:latest
-    container_name: cilengkrang_adminer
+  # Backend Service (Bun + Elysia)
+  backend:
+    build: ./backend
+    container_name: cilengkrang_backend
     restart: unless-stopped
     ports:
-      - "8081:8080"
-    networks:
-      - cilengkrang_network
+      - "3002:3001"
+    environment:
+      DATABASE_URL: "mysql://user:password@db:3306/cilengkrang_web_wisata_ts"
+      JWT_SECRET: "rahasia_negara_api_key_v1"
+      PORT: 3001
     depends_on:
-      - postgres
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  # Frontend Service (React + Vite)
+  frontend:
+    build: ./frontend
+    container_name: cilengkrang_frontend
+    restart: unless-stopped
+    ports:
+      - "5174:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3002/api
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  # Database Admin Interface (Optional)
+  adminer:
+    image: adminer
+    container_name: cilengkrang_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
 
 volumes:
-  cilengkrang_postgres_data:
+  db_data:
 
 networks:
-  cilengkrang_network:
+  app-network:
     driver: bridge
