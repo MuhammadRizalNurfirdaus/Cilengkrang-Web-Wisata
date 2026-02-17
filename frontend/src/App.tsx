@@ -7,6 +7,7 @@ import Home from "./pages/public/Home";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import GoogleCallback from "./pages/auth/GoogleCallback";
 
 import AllDestinations from "./pages/public/AllDestinations";
 import DestinationDetail from "./pages/public/DestinationDetail";
@@ -76,6 +77,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
         <Route path="/destinations" element={<AllDestinations />} />
         <Route path="/destinations/:id" element={<DestinationDetail />} />

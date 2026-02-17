@@ -7,13 +7,10 @@ import Button from "../../components/ui/Button";
 
 export default function ArticleList() {
     const [page, setPage] = useState(1);
-    const { data: result, loading } = useFetch<{
-        data: Article[];
-        pagination: { totalPages: number };
-    }>(`/articles?page=${page}&limit=6`);
+    const { data: articles, loading, pagination } = useFetch<Article[]>(`/articles?page=${page}&limit=6`);
 
-    const articles = result?.data || [];
-    const totalPages = result?.pagination?.totalPages || 1;
+    const items = articles || [];
+    const totalPages = pagination?.totalPages || 1;
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("id-ID", {
@@ -37,10 +34,10 @@ export default function ArticleList() {
                             <span className="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                ) : articles.length > 0 ? (
+                ) : items.length > 0 ? (
                     <>
                         <div className="row g-4 mb-5">
-                            {articles.map((article) => (
+                            {items.map((article) => (
                                 <div key={article.id} className="col-md-4">
                                     <Card
                                         image={article.gambar}

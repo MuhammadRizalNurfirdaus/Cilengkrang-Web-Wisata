@@ -3,6 +3,10 @@ import { jwt } from "@elysiajs/jwt";
 import prisma from "../db";
 import { hashPassword, verifyPassword } from "../utils/password";
 
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
+const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || "http://localhost:5174/auth/google/callback";
+
 export const authRoutes = new Elysia({ prefix: "/auth" })
     .use(
         jwt({
@@ -10,6 +14,114 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             secret: process.env.JWT_SECRET || "default-secret-key",
         })
     )
+    // --- Google OAuth Endpoints ---
+    .get("/google/url", () => {
+        const params = new URLSearchParams({
+            client_id: GOOGLE_CLIENT_ID,
+            redirect_uri: GOOGLE_REDIRECT_URI,
+            response_type: "code",
+            scope: "openid email profile",
+            access_type: "offline",
+            prompt: "consent",
+        });
+        return {
+            success: true,
+            data: { url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}` },
+        };
+    })
+    .post(
+        "/google/callback",
+        async ({ body, jwt, set }) => {
+            try {
+                const { code } = body;
+
+                // Exchange code for tokens
+                const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        code,
+                        client_id: GOOGLE_CLIENT_ID,
+                        client_secret: GOOGLE_CLIENT_SECRET,
+                        redirect_uri: GOOGLE_REDIRECT_URI,
+                        grant_type: "authorization_code",
+                    }),
+                });
+
+                const tokenData = await tokenResponse.json() as any;
+
+                if (tokenData.error) {
+                    set.status = 400;
+                    return { success: false, message: `Google OAuth error: ${tokenData.error_description || tokenData.error}` };
+                }
+
+                // Get user info from Google
+                const userInfoResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+                    headers: { Authorization: `Bearer ${tokenData.access_token}` },
+                });
+
+                const googleUser = await userInfoResponse.json() as any;
+
+                if (!googleUser.email) {
+                    set.status = 400;
+                    return { success: false, message: "Tidak bisa mendapatkan email dari Google" };
+                }
+
+                // Find or create user
+                let user = await prisma.user.findUnique({
+                    where: { email: googleUser.email },
+                });
+
+                if (!user) {
+                    // Create new user from Google data
+                    const randomPassword = await hashPassword(crypto.randomUUID());
+                    user = await prisma.user.create({
+                        data: {
+                            nama: googleUser.name || googleUser.email.split("@")[0],
+                            email: googleUser.email,
+                            password: randomPassword,
+                            fotoProfil: googleUser.picture || null,
+                            role: "user",
+                        },
+                    });
+                }
+
+                // Generate JWT
+                const token = await jwt.sign({
+                    userId: user.id,
+                    email: user.email,
+                    role: user.role,
+                });
+
+                return {
+                    success: true,
+                    message: "Login Google berhasil",
+                    data: {
+                        token,
+                        user: {
+                            id: user.id,
+                            nama: user.nama,
+                            email: user.email,
+                            role: user.role,
+                            noHp: user.noHp,
+                            alamat: user.alamat,
+                            fotoProfil: user.fotoProfil,
+                        },
+                    },
+                };
+            } catch (error) {
+                console.error("Google OAuth error:", error);
+                set.status = 500;
+                return { success: false, message: "Terjadi kesalahan saat login dengan Google" };
+            }
+        },
+        {
+            body: t.Object({
+                code: t.String(),
+            }),
+        }
+    )
+    // --- Standard Auth Endpoints ---
     .post(
         "/register",
         async ({ body, set }) => {

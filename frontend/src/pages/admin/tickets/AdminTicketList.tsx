@@ -8,13 +8,10 @@ import Alert from "../../../components/ui/Alert";
 export default function AdminTicketList() {
     const [page, setPage] = useState(1);
     const [status, setStatus] = useState<{ type: "success" | "danger"; message: string } | null>(null);
-    const { data: result, loading, refetch } = useFetch<{
-        data: PemesananTiket[];
-        pagination: { totalPages: number };
-    }>(`/pemesanan?page=${page}&limit=10`);
+    const { data: orders, loading, pagination, refetch } = useFetch<PemesananTiket[]>(`/pemesanan?page=${page}&limit=10`);
 
-    const orders = result?.data || [];
-    const totalPages = result?.pagination?.totalPages || 1;
+    const items = orders || [];
+    const totalPages = pagination?.totalPages || 1;
 
     const handleUpdateStatus = async (id: number, newStatus: string) => {
         if (!confirm(`Ubah status menjadi ${newStatus}?`)) return;
@@ -52,8 +49,8 @@ export default function AdminTicketList() {
                         <tbody>
                             {loading ? (
                                 <tr><td colSpan={6} className="text-center py-5"><div className="spinner-border text-success"></div></td></tr>
-                            ) : orders.length > 0 ? (
-                                orders.map((order) => (
+                            ) : items.length > 0 ? (
+                                items.map((order) => (
                                     <tr key={order.id}>
                                         <td className="px-4 fw-bold text-success">#{order.kodePemesanan}</td>
                                         <td className="px-4">

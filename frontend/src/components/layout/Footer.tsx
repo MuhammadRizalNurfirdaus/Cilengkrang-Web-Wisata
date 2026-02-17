@@ -13,9 +13,9 @@ export default function Footer() {
                             Destinasi wisata terbaik untuk keluarga dan teman.
                         </p>
                         <div className="d-flex gap-3">
-                            <a href="#" className="text-white-50 hover-text-white"><i className="fab fa-facebook fa-lg"></i></a>
-                            <a href="#" className="text-white-50 hover-text-white"><i className="fab fa-instagram fa-lg"></i></a>
-                            <a href="#" className="text-white-50 hover-text-white"><i className="fab fa-whatsapp fa-lg"></i></a>
+                            <a href="https://www.instagram.com/crawasy_zall" target="_blank" rel="noopener noreferrer" className="text-white-50 hover-text-white"><i className="fab fa-instagram fa-lg"></i></a>
+                            <a href="https://wa.me/6283101461069" target="_blank" rel="noopener noreferrer" className="text-white-50 hover-text-white"><i className="fab fa-whatsapp fa-lg"></i></a>
+                            <a href="mailto:muhammadrizalnurfirdaus@gmail.com" className="text-white-50 hover-text-white"><i className="fas fa-envelope fa-lg"></i></a>
                         </div>
                     </div>
 
@@ -32,9 +32,15 @@ export default function Footer() {
                     <div className="col-md-3">
                         <h6 className="text-white mb-3 fw-bold">Hubungi Kami</h6>
                         <ul className="list-unstyled small text-white-50">
-                            <li className="mb-2"><i className="fas fa-map-marker-alt me-2"></i> Desa Cilengkrang, Kec. Pasaleman, Kab. Cirebon</li>
-                            <li className="mb-2"><i className="fas fa-phone me-2"></i> +62 812-3456-7890</li>
-                            <li className="mb-2"><i className="fas fa-envelope me-2"></i> info@lembahcilengkrang.com</li>
+                            <li className="mb-2">
+                                <i className="fas fa-map-marker-alt me-2"></i>
+                                <a href="https://maps.app.goo.gl/GucUR2sUx7HT5Prt9" target="_blank" rel="noopener noreferrer" className="text-white-50 text-decoration-none">
+                                    Desa Pajambon, Kec. Kramatmulya, Kab. Kuningan, Jawa Barat 45553
+                                </a>
+                            </li>
+                            <li className="mb-2"><i className="fas fa-phone me-2"></i> <a href="tel:+6283101461069" className="text-white-50 text-decoration-none">083-1014-61069</a></li>
+                            <li className="mb-2"><i className="fas fa-envelope me-2"></i> <a href="mailto:muhammadrizalnurfirdaus@gmail.com" className="text-white-50 text-decoration-none">muhammadrizalnurfirdaus@gmail.com</a></li>
+                            <li className="mb-2"><i className="fab fa-instagram me-2"></i> <a href="https://www.instagram.com/crawasy_zall" target="_blank" rel="noopener noreferrer" className="text-white-50 text-decoration-none">@crawasy_zall</a></li>
                         </ul>
                     </div>
                 </div>

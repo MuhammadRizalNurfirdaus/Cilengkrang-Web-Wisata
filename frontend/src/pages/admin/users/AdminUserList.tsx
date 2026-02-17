@@ -8,13 +8,10 @@ import Alert from "../../../components/ui/Alert";
 export default function AdminUserList() {
     const [page, setPage] = useState(1);
     const [status, setStatus] = useState<{ type: "success" | "danger"; message: string } | null>(null);
-    const { data: result, loading, refetch } = useFetch<{
-        data: User[];
-        pagination: { totalPages: number };
-    }>(`/users?page=${page}&limit=10`);
+    const { data: users, loading, pagination, refetch } = useFetch<User[]>(`/users?page=${page}&limit=10`);
 
-    const users = result?.data || [];
-    const totalPages = result?.pagination?.totalPages || 1;
+    const items = users || [];
+    const totalPages = pagination?.totalPages || 1;
 
     const handleDelete = async (id: number) => {
         if (!confirm("Yakin ingin menghapus user ini?")) return;
@@ -47,8 +44,8 @@ export default function AdminUserList() {
                         <tbody>
                             {loading ? (
                                 <tr><td colSpan={5} className="text-center py-5"><div className="spinner-border text-success"></div></td></tr>
-                            ) : users.length > 0 ? (
-                                users.map((user) => (
+                            ) : items.length > 0 ? (
+                                items.map((user) => (
                                     <tr key={user.id}>
                                         <td className="px-4 text-muted">{user.id}</td>
                                         <td className="px-4 fw-medium">{user.nama}</td>

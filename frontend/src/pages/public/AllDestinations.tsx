@@ -7,13 +7,10 @@ import Button from "../../components/ui/Button";
 
 export default function AllDestinations() {
     const [page, setPage] = useState(1);
-    const { data: result, loading } = useFetch<{
-        data: Wisata[];
-        pagination: { totalPages: number };
-    }>(`/wisata?page=${page}&limit=9`);
+    const { data: destinations, loading, pagination } = useFetch<Wisata[]>(`/wisata?page=${page}&limit=9`);
 
-    const destinations = result?.data || [];
-    const totalPages = result?.pagination?.totalPages || 1;
+    const items = destinations || [];
+    const totalPages = pagination?.totalPages || 1;
 
     return (
         <div className="bg-light min-vh-100 py-5 mt-5">
@@ -29,10 +26,10 @@ export default function AllDestinations() {
                             <span className="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                ) : destinations.length > 0 ? (
+                ) : items.length > 0 ? (
                     <>
                         <div className="row g-4 mb-5">
-                            {destinations.map((wisata) => (
+                            {items.map((wisata) => (
                                 <div key={wisata.id} className="col-md-4">
                                     <Card
                                         image={wisata.gambar}

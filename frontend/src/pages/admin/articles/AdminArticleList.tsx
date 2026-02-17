@@ -9,13 +9,10 @@ import Alert from "../../../components/ui/Alert";
 export default function AdminArticleList() {
     const [page, setPage] = useState(1);
     const [status, setStatus] = useState<{ type: "success" | "danger"; message: string } | null>(null);
-    const { data: result, loading, refetch } = useFetch<{
-        data: Article[];
-        pagination: { totalPages: number };
-    }>(`/articles?page=${page}&limit=10`);
+    const { data: articleList, loading, pagination, refetch } = useFetch<Article[]>(`/articles?page=${page}&limit=10`);
 
-    const articleList = result?.data || [];
-    const totalPages = result?.pagination?.totalPages || 1;
+    const items = articleList || [];
+    const totalPages = pagination?.totalPages || 1;
 
     const handleDelete = async (id: number) => {
         if (!confirm("Apakah Anda yakin ingin menghapus artikel ini?")) return;
@@ -62,8 +59,8 @@ export default function AdminArticleList() {
                                         <div className="spinner-border text-success" role="status"></div>
                                     </td>
                                 </tr>
-                            ) : articleList.length > 0 ? (
-                                articleList.map((article, idx) => (
+                            ) : items.length > 0 ? (
+                                items.map((article, idx) => (
                                     <tr key={article.id}>
                                         <td className="px-4 text-muted">{(page - 1) * 10 + idx + 1}</td>
                                         <td className="px-4">

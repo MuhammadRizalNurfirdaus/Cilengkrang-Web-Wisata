@@ -6,13 +6,10 @@ import Button from "../../components/ui/Button";
 
 export default function Gallery() {
     const [page, setPage] = useState(1);
-    const { data: result, loading } = useFetch<{
-        data: Galeri[];
-        pagination: { totalPages: number };
-    }>(`/galeri?page=${page}&limit=12`);
+    const { data: galleryItems, loading, pagination } = useFetch<Galeri[]>(`/galeri?page=${page}&limit=12`);
 
-    const galleryItems = result?.data || [];
-    const totalPages = result?.pagination?.totalPages || 1;
+    const items = galleryItems || [];
+    const totalPages = pagination?.totalPages || 1;
 
     return (
         <div className="bg-light min-vh-100 py-5 mt-5">
@@ -28,10 +25,10 @@ export default function Gallery() {
                             <span className="visually-hidden">Loading...</span>
                         </div>
                     </div>
-                ) : galleryItems.length > 0 ? (
+                ) : items.length > 0 ? (
                     <>
                         <div className="row g-4 mb-5" data-masonry='{"percentPosition": true }'>
-                            {galleryItems.map((item) => (
+                            {items.map((item) => (
                                 <div key={item.id} className="col-md-4 col-lg-3">
                                     <div className="card border-0 shadow-sm overflow-hidden h-100">
                                         <img

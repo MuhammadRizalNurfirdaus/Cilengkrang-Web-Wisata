@@ -31,8 +31,10 @@ export async function fetchApi<T>(
     return data as T;
 }
 
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || "http://localhost:3002";
+
 export const getImageUrl = (path?: string | null) => {
     if (!path) return "https://placehold.co/600x400?text=No+Image";
     if (path.startsWith("http")) return path;
-    return `http://localhost:3001/${path}`; // Assuming static serve from root/uploads or similar
+    return `${API_BASE}/${path}`;
 };

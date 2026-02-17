@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Database Service (MariaDB)
   db:
@@ -7,10 +5,10 @@ services:
     container_name: cilengkrang_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: cilengkrang_web_wisata_ts
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
@@ -18,7 +16,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -prootpassword"]
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,9 +29,13 @@ services:
     ports:
       - "3002:3001"
     environment:
-      DATABASE_URL: "mysql://user:password@db:3306/cilengkrang_web_wisata_ts"
-      JWT_SECRET: "rahasia_negara_api_key_v1"
-      PORT: 3001
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: ${PORT}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+      FRONTEND_URL: ${FRONTEND_URL}
     depends_on:
       db:
         condition: service_healthy
@@ -51,7 +53,7 @@ services:
     ports:
       - "5174:5173"
     environment:
-      - VITE_API_URL=http://localhost:3002/api
+      - VITE_API_URL=${VITE_API_URL}
     depends_on:
       - backend
     networks:

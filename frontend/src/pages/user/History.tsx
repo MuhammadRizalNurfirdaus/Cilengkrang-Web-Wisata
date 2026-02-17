@@ -10,13 +10,12 @@ export default function History() {
     const { user } = useAuth();
     const [page, setPage] = useState(1);
 
-    const { data: result, loading } = useFetch<{
-        data: PemesananTiket[];
-        pagination: { totalPages: number };
-    }>(user ? `/pemesanan/user/${user.id}?page=${page}&limit=5` : null);
+    const { data: orders, loading, pagination } = useFetch<PemesananTiket[]>(
+        user ? `/pemesanan/user/${user.id}?page=${page}&limit=5` : null
+    );
 
-    const orders = result?.data || [];
-    const totalPages = result?.pagination?.totalPages || 1;
+    const items = orders || [];
+    const totalPages = pagination?.totalPages || 1;
 
     if (!user) return null;
 
@@ -26,9 +25,9 @@ export default function History() {
 
             {loading ? (
                 <div className="text-center py-5"><div className="spinner-border text-success"></div></div>
-            ) : orders.length > 0 ? (
+            ) : items.length > 0 ? (
                 <div className="row g-4">
-                    {orders.map((order) => (
+                    {items.map((order) => (
                         <div key={order.id} className="col-12">
                             <div className="card border-0 shadow-sm overflow-hidden">
                                 <div className="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">

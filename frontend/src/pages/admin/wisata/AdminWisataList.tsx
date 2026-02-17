@@ -9,13 +9,10 @@ import Alert from "../../../components/ui/Alert";
 export default function AdminWisataList() {
     const [page, setPage] = useState(1);
     const [status, setStatus] = useState<{ type: "success" | "danger"; message: string } | null>(null);
-    const { data: result, loading, refetch } = useFetch<{
-        data: Wisata[];
-        pagination: { totalPages: number };
-    }>(`/wisata?page=${page}&limit=10`);
+    const { data: wisataList, loading, pagination, refetch } = useFetch<Wisata[]>(`/wisata?page=${page}&limit=10`);
 
-    const wisataList = result?.data || [];
-    const totalPages = result?.pagination?.totalPages || 1;
+    const items = wisataList || [];
+    const totalPages = pagination?.totalPages || 1;
 
     const handleDelete = async (id: number) => {
         if (!confirm("Apakah Anda yakin ingin menghapus destinasi ini?")) return;
@@ -61,8 +58,8 @@ export default function AdminWisataList() {
                                         <div className="spinner-border text-success" role="status"></div>
                                     </td>
                                 </tr>
-                            ) : wisataList.length > 0 ? (
-                                wisataList.map((wisata, idx) => (
+                            ) : items.length > 0 ? (
+                                items.map((wisata, idx) => (
                                     <tr key={wisata.id}>
                                         <td className="px-4 text-muted">{(page - 1) * 10 + idx + 1}</td>
                                         <td className="px-4">
