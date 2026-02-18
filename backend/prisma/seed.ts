@@ -32,7 +32,7 @@ async function main() {
     prisma.user.create({
       data: {
         nama: "Administrator",
-        email: "admin@cilengkrang.com",
+        email: "admin12345@gmail.com",
         password: hashedPassword,
         role: "admin",
         noHp: "081234567890",
@@ -42,7 +42,7 @@ async function main() {
     prisma.user.create({
       data: {
         nama: "Kasir Cilengkrang",
-        email: "kasir@cilengkrang.com",
+        email: "kasir12345@gmail.com",
         password: hashedPassword,
         role: "kasir",
         noHp: "081234567891",
@@ -381,8 +381,8 @@ async function main() {
 
   console.log("\n🎉 Database seeding completed!");
   console.log("\n📝 Default login credentials:");
-  console.log("   Admin:  admin@cilengkrang.com / password123");
-  console.log("   Kasir:  kasir@cilengkrang.com / password123");
+  console.log("   Admin:  admin12345@gmail.com / password123");
+  console.log("   Kasir:  kasir12345@gmail.com / password123");
   console.log("   Owner:  owner@cilengkrang.com / password123");
   console.log("   User:   user@cilengkrang.com / password123");
 }

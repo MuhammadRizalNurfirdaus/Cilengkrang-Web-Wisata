@@ -72,9 +72,9 @@ export default function Contact() {
                         <div className="mt-5">
                             <h6 className="fw-bold mb-3">Ikuti Kami</h6>
                             <div className="d-flex gap-3">
-                                <a href="#" className="btn btn-outline-light rounded-circle p-2" style={{ width: 40, height: 40 }}><i className="fab fa-facebook-f"></i></a>
-                                <a href="#" className="btn btn-outline-light rounded-circle p-2" style={{ width: 40, height: 40 }}><i className="fab fa-instagram"></i></a>
-                                <a href="#" className="btn btn-outline-light rounded-circle p-2" style={{ width: 40, height: 40 }}><i className="fab fa-youtube"></i></a>
+                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="btn btn-outline-light rounded-circle p-2" style={{ width: 40, height: 40 }}><i className="fab fa-facebook-f"></i></a>
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="btn btn-outline-light rounded-circle p-2" style={{ width: 40, height: 40 }}><i className="fab fa-instagram"></i></a>
+                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="btn btn-outline-light rounded-circle p-2" style={{ width: 40, height: 40 }}><i className="fab fa-youtube"></i></a>
                             </div>
                         </div>
                     </div>

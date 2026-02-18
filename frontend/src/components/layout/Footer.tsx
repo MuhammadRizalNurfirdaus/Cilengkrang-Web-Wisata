@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
     const currentYear = new Date().getFullYear();
     const siteName = "Lembah Cilengkrang";
@@ -13,19 +15,20 @@ export default function Footer() {
                             Destinasi wisata terbaik untuk keluarga dan teman.
                         </p>
                         <div className="d-flex gap-3">
-                            <a href="https://www.instagram.com/crawasy_zall" target="_blank" rel="noopener noreferrer" className="text-white-50 hover-text-white"><i className="fab fa-instagram fa-lg"></i></a>
-                            <a href="https://wa.me/6283101461069" target="_blank" rel="noopener noreferrer" className="text-white-50 hover-text-white"><i className="fab fa-whatsapp fa-lg"></i></a>
-                            <a href="mailto:muhammadrizalnurfirdaus@gmail.com" className="text-white-50 hover-text-white"><i className="fas fa-envelope fa-lg"></i></a>
+                            <a href="https://www.instagram.com/crawasy_zall" target="_blank" rel="noopener noreferrer" className="text-white-50"><i className="fab fa-instagram fa-lg"></i></a>
+                            <a href="https://wa.me/6283101461069" target="_blank" rel="noopener noreferrer" className="text-white-50"><i className="fab fa-whatsapp fa-lg"></i></a>
+                            <a href="mailto:muhammadrizalnurfirdaus@gmail.com" className="text-white-50"><i className="fas fa-envelope fa-lg"></i></a>
                         </div>
                     </div>
 
                     <div className="col-md-2">
                         <h6 className="text-white mb-3 fw-bold">Navigasi</h6>
                         <ul className="list-unstyled small">
-                            <li className="mb-2"><a href="/" className="text-white-50 text-decoration-none hover-text-white">Beranda</a></li>
-                            <li className="mb-2"><a href="/destinations" className="text-white-50 text-decoration-none hover-text-white">Destinasi</a></li>
-                            <li className="mb-2"><a href="/gallery" className="text-white-50 text-decoration-none hover-text-white">Galeri</a></li>
-                            <li className="mb-2"><a href="/contact" className="text-white-50 text-decoration-none hover-text-white">Kontak</a></li>
+                            <li className="mb-2"><Link to="/" className="text-white-50 text-decoration-none">Beranda</Link></li>
+                            <li className="mb-2"><Link to="/destinations" className="text-white-50 text-decoration-none">Destinasi</Link></li>
+                            <li className="mb-2"><Link to="/gallery" className="text-white-50 text-decoration-none">Galeri</Link></li>
+                            <li className="mb-2"><Link to="/articles" className="text-white-50 text-decoration-none">Artikel</Link></li>
+                            <li className="mb-2"><Link to="/contact" className="text-white-50 text-decoration-none">Kontak</Link></li>
                         </ul>
                     </div>
 

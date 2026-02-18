@@ -103,16 +103,7 @@ export default function Login() {
                                     required
                                 />
 
-                                <div className="d-flex justify-content-between align-items-center mb-4">
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" id="remember" />
-                                        <label className="form-check-label small" htmlFor="remember">
-                                            Ingat Saya
-                                        </label>
-                                    </div>
-                                    <a href="#" className="small text-success text-decoration-none fw-medium">
-                                        Lupa Password?
-                                    </a>
+                                <div className="mb-4">
                                 </div>
 
                                 <Button type="submit" className="w-100 rounded-pill mb-3" isLoading={loading}>

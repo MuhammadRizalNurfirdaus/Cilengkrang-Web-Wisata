@@ -1014,6 +1014,379 @@ textarea.form-control {
   transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
+/* ==========================================================================
+   AdminLayout Dark Mode Overrides
+   ========================================================================== */
+body.dark-mode .admin-topbar {
+    background-color: var(--element-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+body.dark-mode .admin-topbar .text-muted {
+    color: var(--text-muted) !important;
+}
+body.dark-mode .admin-main-content {
+    background-color: var(--body-bg) !important;
+}
+body.dark-mode .admin-main-content .card {
+    background-color: var(--element-bg);
+    border-color: var(--border-color);
+}
+body.dark-mode .admin-main-content .bg-light {
+    background-color: var(--body-bg) !important;
+}
+body.dark-mode .admin-main-content .bg-white {
+    background-color: var(--element-bg) !important;
+}
+body.dark-mode .admin-main-content .text-dark {
+    color: var(--body-color) !important;
+}
+body.dark-mode .admin-main-content .border-bottom {
+    border-color: var(--border-color) !important;
+}
+body.dark-mode .admin-main-content .table {
+    color: var(--body-color);
+    border-color: var(--border-color);
+}
+body.dark-mode .admin-main-content .table th,
+body.dark-mode .admin-main-content .table td {
+    border-color: var(--border-color);
+}
+body.dark-mode .admin-main-content .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+body.dark-mode .dropdown-menu {
+    background-color: var(--element-bg);
+    border-color: var(--border-color);
+}
+body.dark-mode .dropdown-item {
+    color: var(--body-color);
+}
+body.dark-mode .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+body.dark-mode .dropdown-header {
+    color: var(--text-muted);
+}
+body.dark-mode .dropdown-divider {
+    border-color: var(--border-color);
+}
+/* Profile page gradient bg in dark mode */
+body.dark-mode .card .position-relative[style*="gradient"] {
+    opacity: 0.8;
+}
+/* Nav pills in dark mode */
+body.dark-mode .nav-pills .nav-link.bg-transparent {
+    border-color: var(--border-color) !important;
+    color: var(--text-muted) !important;
+}
+body.dark-mode .nav-pills .nav-link.bg-transparent:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+/* Form controls in admin layout dark mode */
+body.dark-mode .form-control:disabled,
+body.dark-mode .form-control.bg-light {
+    background-color: #2d3748 !important;
+    color: var(--text-muted);
+    border-color: var(--border-color);
+}
+/* Pagination text */
+body.dark-mode .page-link {
+    background-color: var(--element-bg);
+    border-color: var(--border-color);
+    color: var(--body-color);
+}
+body.dark-mode .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+/* Footer in dark mode  */
+body.dark-mode .footer-dark {
+    background-color: var(--dark-bg-base) !important;
+}
+/* Smooth transitions for theme switch */
+.card, .btn, .form-control, .nav-link, .dropdown-menu, .table, .alert, .badge,
+.input-group-text, .modal-content, body, main {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ==========================================================================
+   Global Dark Mode - Extended Coverage
+   ========================================================================== */
+/* General body-level overrides */
+body.dark-mode .bg-white { background-color: var(--element-bg) !important; }
+body.dark-mode .bg-light { background-color: var(--body-bg) !important; }
+body.dark-mode .text-dark { color: var(--body-color) !important; }
+body.dark-mode .text-black { color: var(--body-color) !important; }
+body.dark-mode .text-black-50 { color: var(--text-muted) !important; }
+body.dark-mode .border { border-color: var(--border-color) !important; }
+body.dark-mode .border-bottom { border-color: var(--border-color) !important; }
+body.dark-mode .border-top { border-color: var(--border-color) !important; }
+body.dark-mode .shadow-sm { box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important; }
+body.dark-mode .shadow { box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important; }
+body.dark-mode .shadow-lg { box-shadow: 0 4px 16px rgba(0,0,0,0.5) !important; }
+
+/* Input group text */
+body.dark-mode .input-group-text {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: var(--text-muted);
+}
+
+/* Alerts */
+body.dark-mode .alert-success {
+    background-color: rgba(52, 211, 153, 0.15);
+    border-color: rgba(52, 211, 153, 0.3);
+    color: #6ee7b7;
+}
+body.dark-mode .alert-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+body.dark-mode .alert-warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #fcd34d;
+}
+body.dark-mode .alert-info {
+    background-color: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+body.dark-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Badges */
+body.dark-mode .badge.bg-success { background-color: #059669 !important; }
+body.dark-mode .badge.bg-danger { background-color: #dc2626 !important; }
+body.dark-mode .badge.bg-warning { background-color: #d97706 !important; color: #fff !important; }
+body.dark-mode .badge.bg-info { background-color: #0891b2 !important; }
+body.dark-mode .badge.bg-secondary { background-color: #4b5563 !important; }
+body.dark-mode .badge.bg-primary { background-color: #2563eb !important; }
+
+/* Buttons - success variant */
+body.dark-mode .btn-success {
+    background-color: #059669;
+    border-color: #059669;
+    color: #fff;
+}
+body.dark-mode .btn-success:hover {
+    background-color: #047857;
+    border-color: #047857;
+}
+body.dark-mode .btn-outline-success {
+    color: #34d399;
+    border-color: #34d399;
+}
+body.dark-mode .btn-outline-success:hover {
+    background-color: #059669;
+    border-color: #059669;
+    color: #fff;
+}
+body.dark-mode .btn-outline-danger {
+    color: #f87171;
+    border-color: #f87171;
+}
+body.dark-mode .btn-outline-danger:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #fff;
+}
+body.dark-mode .btn-outline-secondary {
+    color: var(--text-muted);
+    border-color: var(--border-color);
+}
+body.dark-mode .btn-outline-secondary:hover {
+    background-color: #374151;
+    color: var(--body-color);
+}
+body.dark-mode .btn-warning {
+    background-color: #d97706;
+    border-color: #d97706;
+    color: #fff;
+}
+
+/* Card specific */
+body.dark-mode .card-header {
+    background-color: var(--element-bg);
+    border-color: var(--border-color);
+}
+body.dark-mode .card-header.bg-white {
+    background-color: var(--element-bg) !important;
+}
+body.dark-mode .card-footer {
+    background-color: var(--element-bg);
+    border-color: var(--border-color);
+}
+body.dark-mode .card .card-body .text-success {
+    color: #34d399 !important;
+}
+
+/* Nav pills / tabs */
+body.dark-mode .nav-pills .nav-link:not(.active) {
+    color: var(--text-muted);
+}
+body.dark-mode .nav-pills .nav-link.active.bg-success {
+    background-color: #059669 !important;
+}
+body.dark-mode .nav-pills .nav-link.border {
+    border-color: var(--border-color) !important;
+}
+
+/* Form controls general (outside admin) */
+body.dark-mode .form-control {
+    background-color: #374151;
+    color: var(--body-color);
+    border-color: #4b5563;
+}
+body.dark-mode .form-control:focus {
+    background-color: #374151;
+    color: var(--body-color);
+    border-color: #34d399;
+    box-shadow: 0 0 0 0.2rem rgba(52, 211, 153, 0.25);
+}
+body.dark-mode .form-control::placeholder {
+    color: var(--text-muted);
+}
+body.dark-mode .form-control:disabled,
+body.dark-mode .form-control[readonly] {
+    background-color: #1f2937;
+    color: var(--text-muted);
+}
+body.dark-mode .form-select {
+    background-color: #374151;
+    color: var(--body-color);
+    border-color: #4b5563;
+}
+body.dark-mode .form-check-input {
+    background-color: #374151;
+    border-color: #4b5563;
+}
+body.dark-mode .form-check-input:checked {
+    background-color: #059669;
+    border-color: #059669;
+}
+body.dark-mode .form-label {
+    color: var(--body-color);
+}
+body.dark-mode .form-text, body.dark-mode small.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Tables general */
+body.dark-mode .table {
+    color: var(--body-color);
+    border-color: var(--border-color);
+}
+body.dark-mode .table th {
+    background-color: rgba(255,255,255,0.03);
+    border-color: var(--border-color);
+    color: var(--body-color);
+}
+body.dark-mode .table td {
+    border-color: var(--border-color);
+}
+body.dark-mode .table-hover tbody tr:hover {
+    background-color: rgba(255,255,255,0.05);
+}
+body.dark-mode .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(255,255,255,0.02);
+}
+
+/* Modal */
+body.dark-mode .modal-content {
+    background-color: var(--element-bg);
+    border-color: var(--border-color);
+    color: var(--body-color);
+}
+body.dark-mode .modal-header {
+    border-color: var(--border-color);
+}
+body.dark-mode .modal-footer {
+    border-color: var(--border-color);
+}
+
+/* Specific pages - container bg */
+body.dark-mode .container .bg-light {
+    background-color: var(--body-bg) !important;
+}
+
+/* Profile page card bg-opacity overrides */
+body.dark-mode .bg-opacity-10 {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+body.dark-mode .border-white {
+    border-color: var(--border-color) !important;
+}
+
+/* CTA section on Home in dark mode */
+body.dark-mode .bg-success.text-white {
+    background: linear-gradient(135deg, #065f46, #047857) !important;
+}
+
+/* Spinner */
+body.dark-mode .spinner-border.text-success {
+    color: #34d399 !important;
+}
+
+/* fw-bold headings visibility */
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3,
+body.dark-mode h4, body.dark-mode h5, body.dark-mode h6 {
+    color: var(--body-color);
+}
+body.dark-mode .fw-bold.text-success {
+    color: #34d399 !important;
+}
+body.dark-mode .text-success {
+    color: #34d399 !important;
+}
+
+/* 404 page */
+body.dark-mode .container.text-center h1 {
+    color: var(--body-color);
+}
+
+/* Scrollbar dark */
+body.dark-mode ::-webkit-scrollbar {
+    width: 8px;
+}
+body.dark-mode ::-webkit-scrollbar-track {
+    background: var(--body-bg);
+}
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 4px;
+}
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* Navbar dark mode */
+body.dark-mode .navbar.bg-dark {
+    background-color: #111827 !important;
+}
+body.dark-mode .navbar .dropdown-menu {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+body.dark-mode .navbar .dropdown-item {
+    color: #e5e7eb;
+}
+body.dark-mode .navbar .dropdown-item:hover {
+    background-color: rgba(255,255,255,0.08);
+}
+body.dark-mode .navbar .dropdown-header {
+    color: #9ca3af;
+}
+body.dark-mode .navbar .dropdown-divider {
+    border-color: #374151;
+}
+
+/* Login/Register page dark */
+body.dark-mode .bg-success-subtle {
+    background-color: rgba(52, 211, 153, 0.1) !important;
+}
+
 
 /* ==========================================================================
    Dark Mode Styles (Tema Dark Hitam Putih Abu + Warna Menarik)

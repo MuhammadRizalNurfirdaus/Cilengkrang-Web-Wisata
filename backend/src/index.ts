@@ -15,6 +15,7 @@ import { pemesananRoutes } from "./routes/pemesanan";
 import { pembayaranRoutes } from "./routes/pembayaran";
 import { sewaAlatRoutes } from "./routes/sewaAlat";
 import { jadwalRoutes } from "./routes/jadwal";
+import { statsRoutes } from "./routes/stats";
 
 const app = new Elysia()
     .use(
@@ -49,6 +50,7 @@ const app = new Elysia()
             .use(pembayaranRoutes)
             .use(sewaAlatRoutes)
             .use(jadwalRoutes)
+            .use(statsRoutes)
     )
     // Error handler
     .onError(({ code, error }) => {

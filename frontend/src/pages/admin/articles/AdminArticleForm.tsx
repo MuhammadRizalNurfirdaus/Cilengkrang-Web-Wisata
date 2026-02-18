@@ -41,6 +41,7 @@ export default function AdminArticleForm() {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setImageFile(file);
+            if (imagePreview && imagePreview.startsWith('blob:')) URL.revokeObjectURL(imagePreview);
             setImagePreview(URL.createObjectURL(file));
         }
     };
@@ -72,7 +73,7 @@ export default function AdminArticleForm() {
     };
 
     return (
-        <div className="container py-5 mt-5">
+        <div>
             <div className="d-flex align-items-center mb-4">
                 <Link to="/admin/articles" className="btn btn-outline-secondary btn-sm rounded-circle me-3">
                     <i className="fas fa-arrow-left"></i>

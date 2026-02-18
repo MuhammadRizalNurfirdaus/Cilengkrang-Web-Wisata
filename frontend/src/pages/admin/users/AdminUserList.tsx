@@ -25,7 +25,7 @@ export default function AdminUserList() {
     }
 
     return (
-        <div className="container py-5 mt-5">
+        <div>
             <h2 className="fw-bold text-dark mb-4">Kelola User</h2>
             {status && <Alert variant={status.type} message={status.message} onClose={() => setStatus(null)} />}
 

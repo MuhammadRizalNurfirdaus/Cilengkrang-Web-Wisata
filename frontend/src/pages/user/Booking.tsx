@@ -18,6 +18,7 @@ export default function Booking() {
     const [quantities, setQuantities] = useState<Record<number, number>>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [successData, setSuccessData] = useState<any>(null);
 
     const { data: wisata, loading: loadingWisata } = useFetch<Wisata>(
         wisataId ? `/wisata/${wisataId}` : null
@@ -83,9 +84,7 @@ export default function Booking() {
             await fetchApi("/pemesanan", {
                 method: "POST",
                 body: JSON.stringify(payload)
-            });
-
-            navigate("/user/history");
+            }).then(res => setSuccessData(res));
         } catch (err: any) {
             setError(err.message || "Gagal membuat pesanan");
         } finally {
@@ -98,10 +97,58 @@ export default function Booking() {
 
     const totalHarga = calculateTotal();
 
+    if (successData) {
+        const kode = successData?.data?.kodePemesanan || successData?.kodePemesanan || "-";
+        return (
+            <div className="container py-5 mt-5">
+                <div className="row justify-content-center">
+                    <div className="col-lg-6">
+                        <div className="card border-0 shadow-sm text-center p-5">
+                            <div className="mb-4">
+                                <div className="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center" style={{ width: 80, height: 80 }}>
+                                    <i className="fas fa-check-circle text-success fa-3x"></i>
+                                </div>
+                            </div>
+                            <h3 className="fw-bold text-success mb-2">Pemesanan Berhasil!</h3>
+                            <p className="text-muted mb-4">Pesanan Anda telah berhasil dibuat. Silakan lakukan pembayaran sesuai instruksi.</p>
+                            <div className="bg-light rounded-3 p-3 mb-4">
+                                <small className="text-muted d-block">Kode Pemesanan</small>
+                                <h4 className="fw-bold text-dark mb-0">{kode}</h4>
+                            </div>
+                            <div className="text-start mb-4">
+                                <div className="d-flex justify-content-between border-bottom py-2">
+                                    <span className="text-muted">Destinasi</span>
+                                    <span className="fw-semibold">{wisata?.nama}</span>
+                                </div>
+                                <div className="d-flex justify-content-between border-bottom py-2">
+                                    <span className="text-muted">Tanggal Kunjungan</span>
+                                    <span className="fw-semibold">{new Date(date).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span>
+                                </div>
+                                <div className="d-flex justify-content-between py-2">
+                                    <span className="text-muted">Total Pembayaran</span>
+                                    <span className="fw-bold text-success">Rp {totalHarga.toLocaleString("id-ID")}</span>
+                                </div>
+                            </div>
+                            <div className="d-flex gap-3">
+                                <Link to="/user/history" className="btn btn-success flex-fill rounded-pill py-2 fw-bold">
+                                    <i className="fas fa-receipt me-2"></i>Lihat Riwayat
+                                </Link>
+                                <Link to="/destinations" className="btn btn-outline-success flex-fill rounded-pill py-2 fw-bold">
+                                    <i className="fas fa-compass me-2"></i>Jelajahi Lagi
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="container py-5 mt-5">
             <Link to={`/destinations/${wisataId}`} className="btn btn-outline-secondary btn-sm rounded-circle mb-4"><i className="fas fa-arrow-left"></i></Link>
 
+            <form onSubmit={handleSubmit}>
             <div className="row g-5">
                 <div className="col-lg-7">
                     <h2 className="fw-bold text-success mb-4">Form Pemesanan Tiket</h2>
@@ -162,11 +209,12 @@ export default function Booking() {
                                 <h5 className="fw-bold mb-0">Total Pembayaran</h5>
                                 <h4 className="fw-bold text-success mb-0">Rp {totalHarga.toLocaleString("id-ID")}</h4>
                             </div>
-                            <Button onClick={handleSubmit} variant="success" isLoading={loading} className="w-100 py-3 fw-bold rounded-pill text-uppercase shadow-sm" disabled={totalHarga === 0 || !date}>Buat Pesanan <i className="fas fa-arrow-right ms-2"></i></Button>
+                            <Button type="submit" variant="success" isLoading={loading} className="w-100 py-3 fw-bold rounded-pill text-uppercase shadow-sm" disabled={totalHarga === 0 || !date}>Buat Pesanan <i className="fas fa-arrow-right ms-2"></i></Button>
                         </div>
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     );
 }

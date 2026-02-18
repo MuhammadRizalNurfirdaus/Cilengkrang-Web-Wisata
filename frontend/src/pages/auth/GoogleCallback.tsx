@@ -53,11 +53,12 @@ export default function GoogleCallback() {
             } catch (err: any) {
                 console.error("Google callback error:", err);
                 setError(err.message || "Terjadi kesalahan saat login Google");
+                setTimeout(() => navigate("/login"), 3000);
             }
         };
 
         exchangeCode();
-    }, [searchParams]);
+    }, [searchParams, login, navigate]);
 
     if (error) {
         return (

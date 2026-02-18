@@ -1,6 +1,8 @@
 import { Elysia, t } from "elysia";
 import prisma from "../db";
 import { hashPassword } from "../utils/password";
+import { join } from "path";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 
 export const usersRoutes = new Elysia({ prefix: "/users" })
     // Get all users (admin only)
@@ -209,5 +211,65 @@ export const usersRoutes = new Elysia({ prefix: "/users" })
             console.error("Delete user error:", error);
             set.status = 500;
             return { success: false, message: "Terjadi kesalahan server" };
+        }
+    })
+    // Upload profile photo
+    .post("/:id/photo", async ({ params, body, set }) => {
+        try {
+            const userId = parseInt(params.id);
+            const existingUser = await prisma.user.findUnique({ where: { id: userId } });
+
+            if (!existingUser) {
+                set.status = 404;
+                return { success: false, message: "User tidak ditemukan" };
+            }
+
+            const foto = (body as any).foto;
+            if (!foto || !(foto instanceof Blob)) {
+                set.status = 400;
+                return { success: false, message: "File foto diperlukan" };
+            }
+
+            // Validate file type
+            const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+            if (!allowedTypes.includes(foto.type)) {
+                set.status = 400;
+                return { success: false, message: "Format file harus jpg, png, webp, atau gif" };
+            }
+
+            // Save file
+            const uploadDir = join(process.cwd(), "uploads", "profil");
+            if (!existsSync(uploadDir)) {
+                mkdirSync(uploadDir, { recursive: true });
+            }
+
+            const ext = foto.type.split("/")[1] === "jpeg" ? "jpg" : foto.type.split("/")[1];
+            const filename = `profil_${userId}_${Date.now()}.${ext}`;
+            const filepath = join(uploadDir, filename);
+
+            const buffer = Buffer.from(await foto.arrayBuffer());
+            writeFileSync(filepath, buffer);
+
+            const fotoPath = `/uploads/profil/${filename}`;
+
+            const user = await prisma.user.update({
+                where: { id: userId },
+                data: { fotoProfil: fotoPath },
+                select: {
+                    id: true,
+                    nama: true,
+                    email: true,
+                    role: true,
+                    noHp: true,
+                    alamat: true,
+                    fotoProfil: true,
+                },
+            });
+
+            return { success: true, message: "Foto profil berhasil diupdate", data: user };
+        } catch (error) {
+            console.error("Upload photo error:", error);
+            set.status = 500;
+            return { success: false, message: "Gagal upload foto profil" };
         }
     });

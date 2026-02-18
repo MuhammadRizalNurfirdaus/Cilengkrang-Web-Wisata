@@ -2,6 +2,8 @@ import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
+import AdminLayout from "./components/layout/AdminLayout";
+import ThemeToggleButton from "./components/ui/ThemeToggleButton";
 
 import Home from "./pages/public/Home";
 
@@ -29,10 +31,11 @@ import AdminTicketList from "./pages/admin/tickets/AdminTicketList";
 import AdminUserList from "./pages/admin/users/AdminUserList";
 
 import History from "./pages/user/History";
+import Profile from "./pages/user/Profile";
 
 const NotFound = () => <div className="pt-5 mt-5 container text-center"><h1>404 Not Found</h1></div>;
 
-// Layout Component
+// Public Layout (Navbar + Footer)
 const PublicLayout = () => (
   <div className="d-flex flex-column min-vh-100">
     <Navbar />
@@ -70,8 +73,10 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode;
 
 function App() {
   return (
+    <>
+    <ThemeToggleButton />
     <Routes>
-      {/* Public Routes */}
+      {/* ====== PUBLIC ROUTES (Navbar + Footer) ====== */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<Contact />} />
@@ -87,16 +92,16 @@ function App() {
         <Route path="/articles/:id" element={<ArticleDetail />} />
       </Route>
 
-      {/* User Routes (Customer) */}
+      {/* ====== USER ROUTES (Public layout - regular visitor) ====== */}
       <Route path="/user" element={<PublicLayout />}>
         <Route path="dashboard" element={
-          <ProtectedRoute allowedRoles={["user", "admin", "kasir", "owner"]}>
+          <ProtectedRoute allowedRoles={["user"]}>
             <UserDashboard />
           </ProtectedRoute>
         } />
         <Route path="profile" element={
           <ProtectedRoute>
-            <div className="pt-5 mt-5 container"><h1>Profil Saya</h1></div>
+            <div className="container py-4 mt-5"><Profile /></div>
           </ProtectedRoute>
         } />
         <Route path="history" element={
@@ -106,132 +111,138 @@ function App() {
         } />
       </Route>
 
-      {/* Booking Route */}
-      <Route path="/booking" element={
-        <ProtectedRoute>
-          <Booking />
-        </ProtectedRoute>
-      } />
-      <Route path="/booking/:wisataId" element={
-        <ProtectedRoute>
-          <Booking />
-        </ProtectedRoute>
-      } />
-
-      {/* Admin Routes */}
-      <Route path="/admin" element={<PublicLayout />}>
-        <Route path="dashboard" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="wisata" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminWisataList />
-          </ProtectedRoute>
-        } />
-        <Route path="wisata/create" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminWisataForm />
-          </ProtectedRoute>
-        } />
-        <Route path="wisata/edit/:id" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminWisataForm />
-          </ProtectedRoute>
-        } />
-        <Route path="articles" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminArticleList />
-          </ProtectedRoute>
-        } />
-        <Route path="articles/create" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminArticleForm />
-          </ProtectedRoute>
-        } />
-        <Route path="articles/edit/:id" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminArticleForm />
-          </ProtectedRoute>
-        } />
-        <Route path="tickets" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminTicketList />
-          </ProtectedRoute>
-        } />
-        <Route path="users" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminUserList />
-          </ProtectedRoute>
-        } />
+      {/* Booking Route (Public layout) */}
+      <Route element={<PublicLayout />}>
+        <Route path="/booking" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
       </Route>
 
-      {/* Kasir Routes */}
-      <Route path="/kasir" element={<PublicLayout />}>
-        <Route path="dashboard" element={
-          <ProtectedRoute allowedRoles={["kasir", "admin"]}>
-            <KasirDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="pemesanan" element={
-          <ProtectedRoute allowedRoles={["kasir", "admin"]}>
-            <KasirPemesanan />
-          </ProtectedRoute>
-        } />
-        <Route path="konfirmasi/:id" element={
-          <ProtectedRoute allowedRoles={["kasir", "admin"]}>
-            <KasirKonfirmasi />
-          </ProtectedRoute>
-        } />
+      {/* ====== ADMIN ROUTES (Sidebar layout) ====== */}
+      <Route path="/admin" element={
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminLayout role="admin" />
+        </ProtectedRoute>
+      }>
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="wisata" element={<AdminWisataList />} />
+        <Route path="wisata/create" element={<AdminWisataForm />} />
+        <Route path="wisata/edit/:id" element={<AdminWisataForm />} />
+        <Route path="articles" element={<AdminArticleList />} />
+        <Route path="articles/create" element={<AdminArticleForm />} />
+        <Route path="articles/edit/:id" element={<AdminArticleForm />} />
+        <Route path="tickets" element={<AdminTicketList />} />
+        <Route path="users" element={<AdminUserList />} />
+        <Route path="galeri" element={<AdminGaleriPlaceholder />} />
+        <Route path="feedback" element={<AdminFeedbackPlaceholder />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
-      {/* Owner Routes */}
-      <Route path="/owner" element={<PublicLayout />}>
-        <Route path="dashboard" element={
-          <ProtectedRoute allowedRoles={["owner", "admin"]}>
-            <OwnerDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="laporan" element={
-          <ProtectedRoute allowedRoles={["owner", "admin"]}>
-            <OwnerLaporan />
-          </ProtectedRoute>
-        } />
+      {/* ====== KASIR ROUTES (Sidebar layout) ====== */}
+      <Route path="/kasir" element={
+        <ProtectedRoute allowedRoles={["kasir", "admin"]}>
+          <AdminLayout role="kasir" />
+        </ProtectedRoute>
+      }>
+        <Route path="dashboard" element={<KasirDashboard />} />
+        <Route path="pemesanan" element={<KasirPemesanan />} />
+        <Route path="pembayaran" element={<KasirPembayaran />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
+
+      {/* ====== OWNER ROUTES (Sidebar layout) ====== */}
+      <Route path="/owner" element={
+        <ProtectedRoute allowedRoles={["owner", "admin"]}>
+          <AdminLayout role="owner" />
+        </ProtectedRoute>
+      }>
+        <Route path="dashboard" element={<OwnerDashboard />} />
+        <Route path="laporan" element={<OwnerLaporan />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   );
 }
 
-// Placeholder components for Kasir
+/* ================================
+   PLACEHOLDER COMPONENTS
+   ================================ */
+
+// Admin placeholders
+const AdminGaleriPlaceholder = () => (
+  <div>
+    <h2 className="fw-bold mb-2">Kelola Galeri</h2>
+    <p className="text-muted mb-4">Upload dan kelola foto galeri wisata.</p>
+    <div className="card border-0 shadow-sm p-5 text-center text-muted">
+      <i className="fas fa-images fa-3x mb-3 opacity-50"></i>
+      <p>Fitur galeri sedang dalam pengembangan.</p>
+    </div>
+  </div>
+);
+
+const AdminFeedbackPlaceholder = () => (
+  <div>
+    <h2 className="fw-bold mb-2">Feedback Pengunjung</h2>
+    <p className="text-muted mb-4">Lihat ulasan dan rating dari pengunjung.</p>
+    <div className="card border-0 shadow-sm p-5 text-center text-muted">
+      <i className="fas fa-comments fa-3x mb-3 opacity-50"></i>
+      <p>Fitur feedback sedang dalam pengembangan.</p>
+    </div>
+  </div>
+);
+
+// Kasir components
 const KasirDashboard = () => (
-  <div className="pt-5 mt-5 container">
-    <h1 className="mb-4">Dashboard Kasir</h1>
+  <div>
+    <h2 className="fw-bold mb-4">Dashboard Kasir</h2>
     <div className="row g-4">
       <div className="col-md-4">
-        <div className="card bg-primary text-white">
-          <div className="card-body">
-            <h5 className="card-title">Pemesanan Menunggu</h5>
-            <h2 className="display-4">0</h2>
+        <div className="card border-0 shadow-sm">
+          <div className="card-body d-flex align-items-center gap-3 p-4">
+            <div className="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style={{ width: "56px", height: "56px" }}>
+              <i className="fas fa-clock fa-xl text-primary"></i>
+            </div>
+            <div>
+              <div className="text-muted small">Pemesanan Menunggu</div>
+              <h3 className="fw-bold mb-0">0</h3>
+            </div>
           </div>
         </div>
       </div>
       <div className="col-md-4">
-        <div className="card bg-success text-white">
-          <div className="card-body">
-            <h5 className="card-title">Dikonfirmasi Hari Ini</h5>
-            <h2 className="display-4">0</h2>
+        <div className="card border-0 shadow-sm">
+          <div className="card-body d-flex align-items-center gap-3 p-4">
+            <div className="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center" style={{ width: "56px", height: "56px" }}>
+              <i className="fas fa-check-circle fa-xl text-success"></i>
+            </div>
+            <div>
+              <div className="text-muted small">Dikonfirmasi Hari Ini</div>
+              <h3 className="fw-bold mb-0">0</h3>
+            </div>
           </div>
         </div>
       </div>
       <div className="col-md-4">
-        <div className="card bg-info text-white">
-          <div className="card-body">
-            <h5 className="card-title">Total Pendapatan Hari Ini</h5>
-            <h2 className="display-4">Rp 0</h2>
+        <div className="card border-0 shadow-sm">
+          <div className="card-body d-flex align-items-center gap-3 p-4">
+            <div className="rounded-circle bg-info bg-opacity-10 d-flex align-items-center justify-content-center" style={{ width: "56px", height: "56px" }}>
+              <i className="fas fa-money-bill-wave fa-xl text-info"></i>
+            </div>
+            <div>
+              <div className="text-muted small">Pendapatan Hari Ini</div>
+              <h3 className="fw-bold mb-0">Rp 0</h3>
+            </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div className="card border-0 shadow-sm mt-4">
+      <div className="card-body p-4">
+        <h5 className="fw-bold mb-3">Pemesanan Terbaru</h5>
+        <div className="text-center text-muted py-5">
+          <i className="fas fa-inbox fa-3x mb-3 opacity-50"></i>
+          <p>Belum ada pemesanan baru.</p>
         </div>
       </div>
     </div>
@@ -239,56 +250,73 @@ const KasirDashboard = () => (
 );
 
 const KasirPemesanan = () => (
-  <div className="pt-5 mt-5 container">
-    <h1>Daftar Pemesanan</h1>
-    <p className="text-muted">Kelola dan konfirmasi pemesanan tiket di sini.</p>
+  <div>
+    <h2 className="fw-bold mb-2">Pemesanan Tiket</h2>
+    <p className="text-muted mb-4">Kelola dan konfirmasi pemesanan tiket pengunjung.</p>
+    <div className="card border-0 shadow-sm p-5 text-center text-muted">
+      <i className="fas fa-ticket-alt fa-3x mb-3 opacity-50"></i>
+      <p>Belum ada data pemesanan.</p>
+    </div>
   </div>
 );
 
-const KasirKonfirmasi = () => (
-  <div className="pt-5 mt-5 container">
-    <h1>Konfirmasi Pembayaran</h1>
+const KasirPembayaran = () => (
+  <div>
+    <h2 className="fw-bold mb-2">Konfirmasi Pembayaran</h2>
+    <p className="text-muted mb-4">Verifikasi dan konfirmasi pembayaran tiket.</p>
+    <div className="card border-0 shadow-sm p-5 text-center text-muted">
+      <i className="fas fa-credit-card fa-3x mb-3 opacity-50"></i>
+      <p>Belum ada pembayaran yang perlu dikonfirmasi.</p>
+    </div>
   </div>
 );
 
-// Placeholder components for Owner
+// Owner components
 const OwnerDashboard = () => (
-  <div className="pt-5 mt-5 container">
-    <h1 className="mb-4">Dashboard Owner</h1>
+  <div>
+    <h2 className="fw-bold mb-4">Dashboard Owner</h2>
     <div className="row g-4">
       <div className="col-md-3">
-        <div className="card border-primary">
-          <div className="card-body text-center">
-            <i className="fas fa-users fa-3x text-primary mb-3"></i>
-            <h5>Total Pengunjung</h5>
-            <h3 className="text-primary">0</h3>
+        <div className="card border-0 shadow-sm">
+          <div className="card-body text-center p-4">
+            <div className="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: "56px", height: "56px" }}>
+              <i className="fas fa-users fa-xl text-primary"></i>
+            </div>
+            <div className="text-muted small">Total Pengunjung</div>
+            <h3 className="fw-bold mb-0 text-primary">0</h3>
           </div>
         </div>
       </div>
       <div className="col-md-3">
-        <div className="card border-success">
-          <div className="card-body text-center">
-            <i className="fas fa-money-bill-wave fa-3x text-success mb-3"></i>
-            <h5>Total Pendapatan</h5>
-            <h3 className="text-success">Rp 0</h3>
+        <div className="card border-0 shadow-sm">
+          <div className="card-body text-center p-4">
+            <div className="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: "56px", height: "56px" }}>
+              <i className="fas fa-money-bill-wave fa-xl text-success"></i>
+            </div>
+            <div className="text-muted small">Total Pendapatan</div>
+            <h3 className="fw-bold mb-0 text-success">Rp 0</h3>
           </div>
         </div>
       </div>
       <div className="col-md-3">
-        <div className="card border-info">
-          <div className="card-body text-center">
-            <i className="fas fa-ticket-alt fa-3x text-info mb-3"></i>
-            <h5>Tiket Terjual</h5>
-            <h3 className="text-info">0</h3>
+        <div className="card border-0 shadow-sm">
+          <div className="card-body text-center p-4">
+            <div className="rounded-circle bg-info bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: "56px", height: "56px" }}>
+              <i className="fas fa-ticket-alt fa-xl text-info"></i>
+            </div>
+            <div className="text-muted small">Tiket Terjual</div>
+            <h3 className="fw-bold mb-0 text-info">0</h3>
           </div>
         </div>
       </div>
       <div className="col-md-3">
-        <div className="card border-warning">
-          <div className="card-body text-center">
-            <i className="fas fa-star fa-3x text-warning mb-3"></i>
-            <h5>Rating</h5>
-            <h3 className="text-warning">0.0</h3>
+        <div className="card border-0 shadow-sm">
+          <div className="card-body text-center p-4">
+            <div className="rounded-circle bg-warning bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: "56px", height: "56px" }}>
+              <i className="fas fa-star fa-xl text-warning"></i>
+            </div>
+            <div className="text-muted small">Rating</div>
+            <h3 className="fw-bold mb-0 text-warning">0.0</h3>
           </div>
         </div>
       </div>
@@ -297,9 +325,13 @@ const OwnerDashboard = () => (
 );
 
 const OwnerLaporan = () => (
-  <div className="pt-5 mt-5 container">
-    <h1>Laporan</h1>
-    <p className="text-muted">Lihat laporan pendapatan dan statistik pengunjung.</p>
+  <div>
+    <h2 className="fw-bold mb-2">Laporan Pendapatan</h2>
+    <p className="text-muted mb-4">Statistik pendapatan dan kunjungan wisata.</p>
+    <div className="card border-0 shadow-sm p-5 text-center text-muted">
+      <i className="fas fa-chart-line fa-3x mb-3 opacity-50"></i>
+      <p>Fitur laporan sedang dalam pengembangan.</p>
+    </div>
   </div>
 );
 

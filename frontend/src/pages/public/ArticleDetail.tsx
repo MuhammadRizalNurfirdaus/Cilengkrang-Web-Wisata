@@ -75,8 +75,7 @@ export default function ArticleDetail() {
                         )}
 
                         <div className="prose fs-5 text-dark" style={{ lineHeight: "1.8" }}>
-                            {/* Minimal implementation of rendering paragraphs if it's plain text or html */}
-                            {article.isi.split('\n').map((paragraph, idx) => (
+                            {(article.isi || "").split('\n').map((paragraph, idx) => (
                                 <p key={idx} className="mb-4">{paragraph}</p>
                             ))}
                         </div>
@@ -84,9 +83,9 @@ export default function ArticleDetail() {
                         <div className="mt-5 border-top pt-4">
                             <h5 className="fw-bold mb-3">Bagikan Artikel</h5>
                             <div className="d-flex gap-2">
-                                <button className="btn btn-outline-primary rounded-circle"><i className="fab fa-facebook-f"></i></button>
-                                <button className="btn btn-outline-info rounded-circle"><i className="fab fa-twitter"></i></button>
-                                <button className="btn btn-outline-success rounded-circle"><i className="fab fa-whatsapp"></i></button>
+                                <button className="btn btn-outline-primary rounded-circle" onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}><i className="fab fa-facebook-f"></i></button>
+                                <button className="btn btn-outline-info rounded-circle" onClick={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(article.judul)}`, '_blank')}><i className="fab fa-twitter"></i></button>
+                                <button className="btn btn-outline-success rounded-circle" onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(article.judul + ' ' + window.location.href)}`, '_blank')}><i className="fab fa-whatsapp"></i></button>
                             </div>
                         </div>
                     </div>

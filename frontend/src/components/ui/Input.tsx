@@ -10,12 +10,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     ({ label, error, icon, className = "", id, ...props }, ref) => {
         return (
             <div className="mb-3">
-                <label htmlFor={id} className="form-label small fw-medium text-black-50 uppercase tracking-wide">
+                <label htmlFor={id} className="form-label small fw-semibold text-muted">
                     {label}
                 </label>
                 <div className="input-group has-validation">
                     {icon && (
-                        <span className="input-group-text bg-light border-end-0 text-muted">
+                        <span className="input-group-text border-end-0 text-muted">
                             <i className={`fas ${icon}`}></i>
                         </span>
                     )}

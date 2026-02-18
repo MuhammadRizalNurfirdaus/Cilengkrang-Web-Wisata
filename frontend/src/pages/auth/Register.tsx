@@ -137,7 +137,7 @@ export default function Register() {
                                 <div className="form-check mb-4">
                                     <input className="form-check-input" type="checkbox" id="terms" required />
                                     <label className="form-check-label small text-muted" htmlFor="terms">
-                                        Saya setuju dengan <a href="#" className="text-success text-decoration-none">Syarat & Ketentuan</a>
+                                        Saya setuju dengan <span className="text-success fw-medium">Syarat & Ketentuan</span> yang berlaku
                                     </label>
                                 </div>
 

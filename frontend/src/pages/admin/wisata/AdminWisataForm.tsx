@@ -44,6 +44,7 @@ export default function AdminWisataForm() {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setImageFile(file);
+            if (imagePreview && imagePreview.startsWith('blob:')) URL.revokeObjectURL(imagePreview);
             setImagePreview(URL.createObjectURL(file));
         }
     };
@@ -76,7 +77,7 @@ export default function AdminWisataForm() {
     };
 
     return (
-        <div className="container py-5 mt-5">
+        <div>
             <div className="d-flex align-items-center mb-4">
                 <Link to="/admin/wisata" className="btn btn-outline-secondary btn-sm rounded-circle me-3">
                     <i className="fas fa-arrow-left"></i>

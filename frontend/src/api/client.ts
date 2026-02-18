@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
 
 export async function fetchApi<T>(
     endpoint: string,
@@ -6,15 +6,15 @@ export async function fetchApi<T>(
 ): Promise<T> {
     const token = localStorage.getItem("token");
 
-    const headers = {
+    const headers: Record<string, string> = {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...options.headers,
+        ...(options.headers as Record<string, string> || {}),
     };
 
     // Handle FormData (don't set Content-Type)
     if (options.body instanceof FormData) {
-        delete (headers as any)["Content-Type"];
+        delete headers["Content-Type"];
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, {
@@ -22,9 +22,24 @@ export async function fetchApi<T>(
         headers,
     });
 
-    const data = await response.json();
+    // Handle non-JSON responses (502, HTML error pages, etc.)
+    let data: any;
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error(
+            response.status === 502 ? "Server sedang tidak tersedia" :
+            response.status === 504 ? "Server timeout" :
+            `Server error (${response.status})`
+        );
+    }
 
     if (!response.ok) {
+        // Auto-logout on 401 (expired token)
+        if (response.status === 401) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+        }
         throw new Error(data.message || "Terjadi kesalahan pada request API");
     }
 

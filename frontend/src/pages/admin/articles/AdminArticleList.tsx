@@ -27,7 +27,7 @@ export default function AdminArticleList() {
     };
 
     return (
-        <div className="container py-5 mt-5">
+        <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h2 className="fw-bold text-dark">Kelola Artikel</h2>
