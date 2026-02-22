@@ -83,7 +83,7 @@ export default function Contact() {
                 <div className="col-md-7">
                     <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
                         <div className="card-body p-5">
-                            <h4 className="fw-bold mb-4 text-dark">Kirim Pesan</h4>
+                            <h4 className="fw-bold mb-4">Kirim Pesan</h4>
                             {status && <Alert variant={status.type} message={status.message} onClose={() => setStatus(null)} />}
 
                             <form onSubmit={handleSubmit}>
@@ -118,7 +118,7 @@ export default function Contact() {
                                 />
 
                                 <div className="mb-4">
-                                    <label htmlFor="pesan" className="form-label small fw-medium text-black-50 uppercase tracking-wide">Pesan</label>
+                                    <label htmlFor="pesan" className="form-label small fw-medium text-muted uppercase tracking-wide">Pesan</label>
                                     <textarea
                                         id="pesan"
                                         rows={6}

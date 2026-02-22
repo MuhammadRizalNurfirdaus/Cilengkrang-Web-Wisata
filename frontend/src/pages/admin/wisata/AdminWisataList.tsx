@@ -30,7 +30,7 @@ export default function AdminWisataList() {
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 className="fw-bold text-dark">Kelola Wisata</h2>
+                    <h2 className="fw-bold">Kelola Wisata</h2>
                     <p className="text-muted mb-0">Daftar semua destinasi wisata</p>
                 </div>
                 <Link to="/admin/wisata/create" className="btn btn-success rounded-pill px-4 shadow-sm">

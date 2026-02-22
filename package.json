@@ -1,7 +1,7 @@
 {
     "name": "cilengkrang-web-wisata",
     "version": "2.0.0",
-    "description": "Aplikasi Web Wisata Cilengkrang - TypeScript, React, Elysia, PostgreSQL",
+    "description": "Aplikasi Web Wisata Cilengkrang - TypeScript, React, Elysia, MariaDB",
     "scripts": {
         "dev:backend": "cd backend && bun run dev",
         "dev:frontend": "cd frontend && npm run dev",

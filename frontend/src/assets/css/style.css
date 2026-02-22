@@ -1205,6 +1205,52 @@ body.dark-mode .btn-warning {
     border-color: #d97706;
     color: #fff;
 }
+body.dark-mode .btn-outline-dark {
+    color: var(--body-color);
+    border-color: var(--border-color);
+}
+body.dark-mode .btn-outline-dark:hover {
+    background-color: #374151;
+    color: var(--body-color);
+    border-color: #4b5563;
+}
+body.dark-mode .btn-outline-primary {
+    color: #60a5fa;
+    border-color: #60a5fa;
+}
+body.dark-mode .btn-outline-primary:hover {
+    background-color: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+}
+body.dark-mode .btn-outline-info {
+    color: #67e8f9;
+    border-color: #67e8f9;
+}
+body.dark-mode .btn-outline-info:hover {
+    background-color: #0891b2;
+    border-color: #0891b2;
+    color: #fff;
+}
+body.dark-mode .btn.btn-light.disabled,
+body.dark-mode .btn.btn-light:disabled {
+    background-color: #374151;
+    color: var(--text-muted);
+    border-color: var(--border-color);
+    opacity: 0.8;
+}
+
+/* Table variant overrides */
+body.dark-mode .table-success {
+    --bs-table-bg: rgba(52, 211, 153, 0.15);
+    --bs-table-color: var(--body-color);
+    --bs-table-border-color: var(--border-color);
+}
+body.dark-mode .table-light {
+    --bs-table-bg: rgba(255, 255, 255, 0.03);
+    --bs-table-color: var(--body-color);
+    --bs-table-border-color: var(--border-color);
+}
 
 /* Card specific */
 body.dark-mode .card-header {
@@ -1799,6 +1845,36 @@ body.dark-mode {
   .back-to-top-btn:hover {
     background-color: var(--primary-color); /* Menggunakan variabel mode gelap */
   }
+
+  /* Quick Menu hover (admin dashboard) */
+  .quick-menu-item {
+    transition: all 0.2s;
+    border-color: var(--border-color) !important;
+  }
+  .quick-menu-item:hover {
+    background-color: var(--element-bg) !important;
+  }
+
+  /* CTA btn-light on green bg should stay white */
+  .bg-success .btn-light {
+    background-color: #fff !important;
+    color: #059669 !important;
+    border-color: #fff !important;
+  }
+  .bg-success .btn-light:hover {
+    background-color: #f0fdf4 !important;
+    color: #047857 !important;
+  }
+}
+
+
+/* Quick Menu Item base styles */
+.quick-menu-item {
+  transition: all 0.2s;
+}
+.quick-menu-item:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 

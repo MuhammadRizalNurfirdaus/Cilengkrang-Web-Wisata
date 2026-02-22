@@ -29,13 +29,21 @@ class ErrorBoundary extends Component<Props, State> {
     public render() {
         if (this.state.hasError) {
             return (
-                <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
-                    <h1>Something went wrong.</h1>
-                    <details style={{ whiteSpace: "pre-wrap" }}>
-                        {this.state.error && this.state.error.toString()}
-                        <br />
-                        {this.state.errorInfo && this.state.errorInfo.componentStack}
-                    </details>
+                <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh", padding: "20px", background: "var(--body-bg, #f8f9fa)", color: "var(--body-color, #212529)" }}>
+                    <div className="text-center" style={{ maxWidth: "500px" }}>
+                        <i className="fas fa-exclamation-triangle fa-4x text-warning mb-4 d-block"></i>
+                        <h1 className="fw-bold mb-3">Terjadi Kesalahan</h1>
+                        <p className="text-muted mb-4">Maaf, terjadi kesalahan yang tidak terduga. Silakan muat ulang halaman.</p>
+                        <button className="btn btn-success rounded-pill px-4" onClick={() => window.location.reload()}>
+                            <i className="fas fa-redo me-2"></i>Muat Ulang
+                        </button>
+                        <details className="mt-4 text-start small text-muted" style={{ whiteSpace: "pre-wrap" }}>
+                            <summary className="mb-2" style={{ cursor: "pointer" }}>Detail Teknis</summary>
+                            {this.state.error && this.state.error.toString()}
+                            <br />
+                            {this.state.errorInfo && this.state.errorInfo.componentStack}
+                        </details>
+                    </div>
                 </div>
             );
         }

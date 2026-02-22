@@ -33,7 +33,18 @@ import AdminUserList from "./pages/admin/users/AdminUserList";
 import History from "./pages/user/History";
 import Profile from "./pages/user/Profile";
 
-const NotFound = () => <div className="pt-5 mt-5 container text-center"><h1>404 Not Found</h1></div>;
+const NotFound = () => (
+  <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "60vh" }}>
+    <div className="text-center">
+      <h1 className="display-1 fw-bold text-success mb-0">404</h1>
+      <h4 className="fw-bold mb-3">Halaman Tidak Ditemukan</h4>
+      <p className="text-muted mb-4">Maaf, halaman yang Anda cari tidak tersedia.</p>
+      <a href="/" className="btn btn-success rounded-pill px-4">
+        <i className="fas fa-home me-2"></i>Kembali ke Beranda
+      </a>
+    </div>
+  </div>
+);
 
 // Public Layout (Navbar + Footer)
 const PublicLayout = () => (

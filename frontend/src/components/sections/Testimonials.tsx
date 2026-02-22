@@ -42,8 +42,8 @@ export default function Testimonials() {
                                                     style={{ objectFit: "cover" }}
                                                 />
                                                 <div>
-                                                    <h6 className="fw-bold mb-0 text-dark small">{feedback.user?.nama || "Pengunjung"}</h6>
-                                                    <small className="text-black-50" style={{ fontSize: "0.75rem" }}>
+                                                    <h6 className="fw-bold mb-0 small">{feedback.user?.nama || "Pengunjung"}</h6>
+                                                    <small className="text-muted" style={{ fontSize: "0.75rem" }}>
                                                         {new Date(feedback.createdAt).toLocaleDateString()}
                                                     </small>
                                                 </div>

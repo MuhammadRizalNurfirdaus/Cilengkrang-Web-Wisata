@@ -83,7 +83,7 @@ export default function AdminWisataForm() {
                     <i className="fas fa-arrow-left"></i>
                 </Link>
                 <div>
-                    <h2 className="fw-bold text-dark mb-0">{isEdit ? "Edit Wisata" : "Tambah Wisata Baru"}</h2>
+                    <h2 className="fw-bold mb-0">{isEdit ? "Edit Wisata" : "Tambah Wisata Baru"}</h2>
                     <p className="text-muted mb-0">Isi formulir berikut untuk {isEdit ? "memperbarui" : "menambahkan"} destinasi</p>
                 </div>
             </div>
@@ -104,7 +104,7 @@ export default function AdminWisataForm() {
                                 />
 
                                 <div className="mb-3">
-                                    <label htmlFor="deskripsi" className="form-label small fw-medium text-black-50 uppercase tracking-wide">Deskripsi</label>
+                                    <label htmlFor="deskripsi" className="form-label small fw-medium text-muted uppercase tracking-wide">Deskripsi</label>
                                     <textarea
                                         id="deskripsi"
                                         className="form-control"
@@ -123,7 +123,7 @@ export default function AdminWisataForm() {
                             </div>
 
                             <div className="col-md-4">
-                                <label className="form-label small fw-medium text-black-50 uppercase tracking-wide">Gambar Utama</label>
+                                <label className="form-label small fw-medium text-muted uppercase tracking-wide">Gambar Utama</label>
                                 <div className="card bg-light border-dashed text-center d-flex align-items-center justify-content-center overflow-hidden position-relative" style={{ height: "250px", borderStyle: "dashed", borderWidth: "2px" }}>
                                     {imagePreview ? (
                                         <img src={imagePreview} alt="Preview" className="w-100 h-100 object-fit-cover position-absolute top-0 start-0" />

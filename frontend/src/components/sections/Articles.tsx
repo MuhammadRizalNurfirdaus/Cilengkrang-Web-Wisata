@@ -51,7 +51,7 @@ export default function Articles() {
                     </div>
                 ) : (
                     <div className="text-center py-5 text-muted">
-                        <i className="fas fa-newspaper fa-3x mb-3 text-black-50"></i>
+                        <i className="fas fa-newspaper fa-3x mb-3 opacity-50"></i>
                         <p>Belum ada artikel yang diterbitkan.</p>
                     </div>
                 )}

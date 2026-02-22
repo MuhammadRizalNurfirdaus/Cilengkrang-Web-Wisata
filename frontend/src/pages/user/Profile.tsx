@@ -124,7 +124,7 @@ export default function Profile() {
                             <div className="position-relative flex-shrink-0">
                                 {avatarUrl ? (
                                     <img src={avatarUrl} alt="Foto" className="rounded-circle border border-4 border-white shadow"
-                                        style={{ width: "90px", height: "90px", objectFit: "cover", background: "#fff" }} />
+                                        style={{ width: "90px", height: "90px", objectFit: "cover", background: "var(--element-bg, #fff)" }} />
                                 ) : (
                                     <div className="rounded-circle d-flex align-items-center justify-content-center text-white shadow border border-4 border-white"
                                         style={{ width: "90px", height: "90px", fontSize: "2rem", background: roleBg }}>
@@ -251,7 +251,7 @@ export default function Profile() {
                                     </div>
                                 </div>
                                 <div className="mt-3">
-                                    <button type="submit" className="btn btn-warning rounded-pill px-4 text-dark" disabled={pwLoading}>
+                                    <button type="submit" className="btn btn-warning rounded-pill px-4" disabled={pwLoading}>
                                         {pwLoading ? (<><span className="spinner-border spinner-border-sm me-2" />Mengubah...</>)
                                             : (<><i className="fas fa-key me-2"></i>Ubah Password</>)}
                                     </button>

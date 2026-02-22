@@ -30,7 +30,7 @@ export default function AdminTicketList() {
 
     return (
         <div>
-            <h2 className="fw-bold text-dark mb-4">Kelola Tiket</h2>
+            <h2 className="fw-bold mb-4">Kelola Tiket</h2>
             {status && <Alert variant={status.type} message={status.message} onClose={() => setStatus(null)} />}
 
             <div className="card border-0 shadow-sm overflow-hidden">

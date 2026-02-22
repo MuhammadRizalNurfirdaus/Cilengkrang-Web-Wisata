@@ -62,7 +62,7 @@ export default function ArticleList() {
                                 >
                                     <i className="fas fa-chevron-left me-1"></i> Prev
                                 </Button>
-                                <span className="btn btn-light disabled border">
+                                <span className="d-flex align-items-center small text-muted px-3">
                                     Halaman {page} dari {totalPages}
                                 </span>
                                 <Button
@@ -77,7 +77,7 @@ export default function ArticleList() {
                     </>
                 ) : (
                     <div className="text-center py-5 text-muted">
-                        <i className="fas fa-newspaper fa-4x mb-3 text-black-50"></i>
+                        <i className="fas fa-newspaper fa-4x mb-3 opacity-50"></i>
                         <h3>Belum ada artikel</h3>
                     </div>
                 )}

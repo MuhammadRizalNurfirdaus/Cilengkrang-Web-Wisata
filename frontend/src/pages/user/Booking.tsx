@@ -113,7 +113,7 @@ export default function Booking() {
                             <p className="text-muted mb-4">Pesanan Anda telah berhasil dibuat. Silakan lakukan pembayaran sesuai instruksi.</p>
                             <div className="bg-light rounded-3 p-3 mb-4">
                                 <small className="text-muted d-block">Kode Pemesanan</small>
-                                <h4 className="fw-bold text-dark mb-0">{kode}</h4>
+                                <h4 className="fw-bold mb-0">{kode}</h4>
                             </div>
                             <div className="text-start mb-4">
                                 <div className="d-flex justify-content-between border-bottom py-2">

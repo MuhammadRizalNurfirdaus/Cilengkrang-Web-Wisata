@@ -79,7 +79,7 @@ export default function AdminArticleForm() {
                     <i className="fas fa-arrow-left"></i>
                 </Link>
                 <div>
-                    <h2 className="fw-bold text-dark mb-0">{isEdit ? "Edit Artikel" : "Buat Artikel Baru"}</h2>
+                    <h2 className="fw-bold mb-0">{isEdit ? "Edit Artikel" : "Buat Artikel Baru"}</h2>
                     <p className="text-muted mb-0">Isi formulir berikut untuk {isEdit ? "memperbarui" : "membuat"} artikel berita</p>
                 </div>
             </div>
@@ -100,7 +100,7 @@ export default function AdminArticleForm() {
                                 />
 
                                 <div className="mb-3">
-                                    <label htmlFor="isi" className="form-label small fw-medium text-black-50 uppercase tracking-wide">Isi Konten</label>
+                                    <label htmlFor="isi" className="form-label small fw-medium text-muted uppercase tracking-wide">Isi Konten</label>
                                     <textarea
                                         id="isi"
                                         className="form-control font-monospace"
@@ -114,7 +114,7 @@ export default function AdminArticleForm() {
                             </div>
 
                             <div className="col-md-4">
-                                <label className="form-label small fw-medium text-black-50 uppercase tracking-wide">Gambar Sampul</label>
+                                <label className="form-label small fw-medium text-muted uppercase tracking-wide">Gambar Sampul</label>
                                 <div className="card bg-light border-dashed text-center d-flex align-items-center justify-content-center overflow-hidden position-relative" style={{ height: "200px", borderStyle: "dashed", borderWidth: "2px" }}>
                                     {imagePreview ? (
                                         <img src={imagePreview} alt="Preview" className="w-100 h-100 object-fit-cover position-absolute top-0 start-0" />

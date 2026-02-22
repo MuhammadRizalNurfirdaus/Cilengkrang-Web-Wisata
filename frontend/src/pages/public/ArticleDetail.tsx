@@ -74,7 +74,7 @@ export default function ArticleDetail() {
                             />
                         )}
 
-                        <div className="prose fs-5 text-dark" style={{ lineHeight: "1.8" }}>
+                        <div className="prose fs-5" style={{ lineHeight: "1.8" }}>
                             {(article.isi || "").split('\n').map((paragraph, idx) => (
                                 <p key={idx} className="mb-4">{paragraph}</p>
                             ))}

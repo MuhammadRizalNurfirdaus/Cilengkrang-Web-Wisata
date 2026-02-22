@@ -30,7 +30,7 @@ export default function AdminArticleList() {
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 className="fw-bold text-dark">Kelola Artikel</h2>
+                    <h2 className="fw-bold">Kelola Artikel</h2>
                     <p className="text-muted mb-0">Daftar semua artikel dan berita</p>
                 </div>
                 <Link to="/admin/articles/create" className="btn btn-success rounded-pill px-4 shadow-sm">

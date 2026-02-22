@@ -140,8 +140,8 @@ export default function UserDashboard() {
                         <Link to={item.link} className="text-decoration-none">
                             <div className="card border-0 shadow-sm h-100 transition-all"
                                  style={{ transition: "transform .2s, box-shadow .2s" }}
-                                 onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 .5rem 1rem rgba(0,0,0,.12)"; }}
-                                 onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 .125rem .25rem rgba(0,0,0,.075)"; }}
+                                 onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 .5rem 1rem rgba(0,0,0,.25)"; }}
+                                 onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = ""; }}
                             >
                                 <div className="card-body text-center py-4">
                                     <div
@@ -150,7 +150,7 @@ export default function UserDashboard() {
                                     >
                                         <i className={`fas ${item.icon} fa-xl text-${item.color}`}></i>
                                     </div>
-                                    <h5 className="fw-bold mb-1 text-dark">{item.title}</h5>
+                                    <h5 className="fw-bold mb-1">{item.title}</h5>
                                     <p className="text-muted small mb-0">{item.desc}</p>
                                 </div>
                             </div>

@@ -40,7 +40,7 @@ export default function Gallery() {
                                             onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
                                         />
                                         {item.keterangan && (
-                                            <div className="card-body p-2 text-center small text-muted bg-white border-top">
+                                            <div className="card-body p-2 text-center small text-muted border-top">
                                                 {item.keterangan}
                                             </div>
                                         )}
@@ -59,7 +59,7 @@ export default function Gallery() {
                                 >
                                     <i className="fas fa-chevron-left me-1"></i> Prev
                                 </Button>
-                                <span className="btn btn-light disabled border">
+                                <span className="d-flex align-items-center small text-muted px-3">
                                     Halaman {page} dari {totalPages}
                                 </span>
                                 <Button
@@ -74,7 +74,7 @@ export default function Gallery() {
                     </>
                 ) : (
                     <div className="text-center py-5 text-muted">
-                        <i className="fas fa-images fa-4x mb-3 text-black-50"></i>
+                        <i className="fas fa-images fa-4x mb-3 opacity-50"></i>
                         <h3>Belum ada foto galeri</h3>
                     </div>
                 )}

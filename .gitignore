@@ -40,6 +40,7 @@ build/
 !.env.example
 
 # Docker volumes
+db_data/
 postgres_data/
 
 # Prisma

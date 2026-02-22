@@ -158,12 +158,12 @@ export default function AdminDashboard() {
                                 {quickMenu.map((item, idx) => (
                                     <div key={idx} className="col-6">
                                         <Link to={item.link} className="text-decoration-none">
-                                            <div className="border rounded p-3 text-center h-100" style={{ transition: "all .2s" }}
-                                                onMouseEnter={e => { e.currentTarget.style.background = "#f8f9fa"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                                                onMouseLeave={e => { e.currentTarget.style.background = ""; e.currentTarget.style.transform = ""; }}
+                                            <div className="border rounded p-3 text-center h-100 quick-menu-item"
+                                                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; }}
+                                                onMouseLeave={e => { e.currentTarget.style.transform = ""; }}
                                             >
                                                 <i className={`fas ${item.icon} fa-lg text-${item.color} mb-2`}></i>
-                                                <div className="small fw-semibold text-dark">{item.title}</div>
+                                                <div className="small fw-semibold">{item.title}</div>
                                             </div>
                                         </Link>
                                     </div>

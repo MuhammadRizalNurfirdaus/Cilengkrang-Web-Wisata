@@ -364,13 +364,13 @@ async function main() {
     data: [
       {
         userId: users[3].id,
-        wisataId: wisata[0].id,
+        wisataId: wisata[0]?.id ?? 1,
         komentar: "Tempatnya sangat indah dan sejuk! Cocok untuk refreshing dari kesibukan kota.",
         rating: 5,
       },
       {
         userId: users[3].id,
-        wisataId: wisata[1].id,
+        wisataId: wisata[1]?.id ?? 2,
         komentar: "Air panasnya sangat menyegarkan, badan jadi rileks setelah berendam.",
         rating: 4,
       },
