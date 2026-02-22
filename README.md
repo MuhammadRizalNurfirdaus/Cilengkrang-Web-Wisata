@@ -62,7 +62,7 @@
 | Teknologi | Versi | Deskripsi |
 |-----------|-------|-----------|
 | [React](https://react.dev/) | 19 | UI library utama |
-| [Vite](https://vitejs.dev/) | 7.3 | Build tool & dev server |
+| [Vite](https://vitejs.dev/) | 7.2 | Build tool & dev server |
 | [TypeScript](https://www.typescriptlang.org/) | 5.9 | Type safety |
 | [React Router](https://reactrouter.com/) | 6.30 | Client-side routing (SPA) |
 | [Bootstrap 5](https://getbootstrap.com/) | 5.3 | CSS framework |
@@ -90,13 +90,12 @@ Cilengkrang-Web-Wisata/
 │   ├── package.json
 │   ├── tsconfig.json
 │   ├── prisma/
-│   │   ├── schema.prisma        # Database schema (14 model, 5 enum)
+│   │   ├── schema.prisma        # Database schema (15 model, 6 enum)
 │   │   └── seed.ts              # Seed data awal
 │   ├── src/
 │   │   ├── index.ts             # Entry point server
 │   │   ├── db.ts                # Prisma client instance
-│   │   ├── middleware/
-│   │   │   └── auth.ts          # JWT middleware & role guard
+│   │   ├── middleware/          # (Reserved untuk middleware)
 │   │   ├── routes/              # API route handlers
 │   │   │   ├── auth.ts          # Login, register, Google OAuth
 │   │   │   ├── wisata.ts        # CRUD destinasi wisata
@@ -113,6 +112,7 @@ Cilengkrang-Web-Wisata/
 │   │   │   └── stats.ts         # Dashboard statistik
 │   │   └── utils/               # Helper functions
 │   └── uploads/                 # File upload storage
+│       ├── articles/
 │       ├── artikel/
 │       ├── galeri/
 │       ├── profil/
@@ -136,6 +136,7 @@ Cilengkrang-Web-Wisata/
 │       ├── hooks/
 │       │   └── useFetch.ts      # Custom data fetching hook
 │       ├── components/
+│       │   ├── ErrorBoundary.tsx     # Error boundary global
 │       │   ├── layout/
 │       │   │   ├── Navbar.tsx       # Navbar publik (theme-aware)
 │       │   │   ├── Footer.tsx       # Footer dengan links
@@ -151,11 +152,13 @@ Cilengkrang-Web-Wisata/
 │       │       ├── Button.tsx       # Reusable button
 │       │       ├── Card.tsx         # Reusable card
 │       │       ├── Input.tsx        # Form input
+│       │       ├── ThemeToggle.css  # Animasi tombol tema
 │       │       └── ThemeToggleButton.tsx # Tombol dark/light mode
 │       ├── pages/
 │       │   ├── auth/
 │       │   │   ├── Login.tsx        # Halaman login
 │       │   │   ├── Register.tsx     # Halaman registrasi
+│       │   │   ├── Logout.tsx       # Proses logout
 │       │   │   └── GoogleCallback.tsx # Google OAuth callback
 │       │   ├── public/
 │       │   │   ├── Home.tsx             # Beranda
@@ -528,22 +531,37 @@ Aplikasi mendukung **tema gelap dan terang** yang dapat ditoggle dengan tombol m
 |---------|-------|-----------|
 | Beranda | `/` | Hero video, destinasi populer, fitur, artikel, testimonial |
 | Destinasi | `/destinations` | Semua destinasi wisata dengan pagination |
-| Detail Destinasi | `/destinations/:slug` | Detail destinasi, tiket, galeri, peta |
+| Detail Destinasi | `/destinations/:id` | Detail destinasi, tiket, galeri, peta |
 | Artikel | `/articles` | Daftar semua artikel |
-| Detail Artikel | `/articles/:slug` | Detail artikel dengan share social media |
+| Detail Artikel | `/articles/:id` | Detail artikel dengan share social media |
 | Galeri | `/gallery` | Galeri foto wisata |
 | Kontak | `/contact` | Form kontak dan info lokasi |
 | Login | `/login` | Login (email/password + Google OAuth) |
 | Registrasi | `/register` | Registrasi akun baru |
-| Dashboard User | `/dashboard` | Statistik, menu navigasi cepat |
+| Google Callback | `/auth/google/callback` | Callback Google OAuth |
+| Dashboard User | `/user/dashboard` | Statistik, menu navigasi cepat |
 | Pemesanan | `/booking` | Form pemesanan tiket wisata |
-| Riwayat | `/history` | Riwayat pemesanan + cancel |
-| Profil | `/profile` | Edit profil, foto, password |
-| Dashboard Admin | `/admin` | 10 metrik, pesanan terkini, quick menu |
+| Riwayat | `/user/history` | Riwayat pemesanan + cancel |
+| Profil User | `/user/profile` | Edit profil, foto, password |
+| Dashboard Admin | `/admin/dashboard` | 10 metrik, pesanan terkini, quick menu |
 | Kelola Wisata | `/admin/wisata` | CRUD destinasi wisata |
+| Tambah Wisata | `/admin/wisata/create` | Form tambah destinasi |
+| Edit Wisata | `/admin/wisata/edit/:id` | Form edit destinasi |
 | Kelola Artikel | `/admin/articles` | CRUD artikel |
+| Tambah Artikel | `/admin/articles/create` | Form tambah artikel |
+| Edit Artikel | `/admin/articles/edit/:id` | Form edit artikel |
 | Kelola Tiket | `/admin/tickets` | Kelola jenis tiket |
 | Kelola User | `/admin/users` | Kelola user & role |
+| Kelola Galeri | `/admin/galeri` | Manajemen galeri foto |
+| Kelola Feedback | `/admin/feedback` | Manajemen feedback |
+| Profil Admin | `/admin/profile` | Edit profil admin |
+| Dashboard Kasir | `/kasir/dashboard` | Dashboard kasir |
+| Pemesanan Kasir | `/kasir/pemesanan` | Kelola pemesanan tiket |
+| Pembayaran Kasir | `/kasir/pembayaran` | Kelola pembayaran |
+| Profil Kasir | `/kasir/profile` | Edit profil kasir |
+| Dashboard Owner | `/owner/dashboard` | Dashboard owner |
+| Laporan Owner | `/owner/laporan` | Laporan & analytics |
+| Profil Owner | `/owner/profile` | Edit profil owner |
 
 ---
 
@@ -555,11 +573,15 @@ Aplikasi mendukung **tema gelap dan terang** yang dapat ditoggle dengan tombol m
 | Pesan tiket | ✅ | ✅ | ✅ | ✅ |
 | Dashboard user | ✅ | ✅ | ✅ | ✅ |
 | Edit profil | ✅ | ✅ | ✅ | ✅ |
-| Dashboard admin | ❌ | ✅ | ✅ | ✅ |
+| Dashboard kasir | ❌ | ✅ | ❌ | ❌ |
+| Kelola pemesanan & pembayaran | ❌ | ✅ | ✅ | ✅ |
+| Dashboard admin | ❌ | ❌ | ✅ | ✅ |
 | Kelola wisata | ❌ | ❌ | ✅ | ✅ |
 | Kelola artikel | ❌ | ❌ | ✅ | ✅ |
 | Kelola tiket | ❌ | ✅ | ✅ | ✅ |
 | Kelola user | ❌ | ❌ | ✅ | ✅ |
+| Kelola galeri & feedback | ❌ | ❌ | ✅ | ✅ |
+| Dashboard owner & laporan | ❌ | ❌ | ❌ | ✅ |
 
 ---
 
