@@ -1,6 +1,34 @@
 /* Cilengkrang Web Wisata - Custom Style */
 
 /* ==========================================================================
+   Admin Dashboard Enhancements
+   ========================================================================== */
+.admin-stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12);
+}
+
+.admin-revenue-card {
+  background: linear-gradient(135deg, #198754 0%, #0f5132 100%);
+  border: 0;
+}
+
+.quick-menu-item {
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  background: var(--element-bg);
+}
+
+.quick-menu-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(25, 135, 84, 0.45) !important;
+  background-color: rgba(25, 135, 84, 0.03);
+}
+
+/* ==========================================================================
    Root Variables (Default / Light Mode - Tema Alam)
    ========================================================================== */
 :root {

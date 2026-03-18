@@ -6,6 +6,7 @@ import { Wisata } from "../../../types";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
+import { getErrorMessage } from "../../../utils/error";
 
 export default function AdminWisataForm() {
     const { id } = useParams<{ id: string }>();
@@ -69,8 +70,8 @@ export default function AdminWisataForm() {
             });
 
             navigate("/admin/wisata");
-        } catch (err: any) {
-            setError(err.message || "Gagal menyimpan data wisata");
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, "Gagal menyimpan data wisata"));
         } finally {
             setLoading(false);
         }

@@ -6,6 +6,8 @@ import { AuthResponse } from "../../types";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
+import { getErrorMessage } from "../../utils/error";
+import { ValidationRules } from "../../utils/validation";
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ export default function Register() {
         confirmPassword: "",
         noHp: "",
     });
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -22,15 +25,65 @@ export default function Register() {
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+        
+        // Clear field error on change
+        if (fieldErrors[id]) {
+            setFieldErrors({ ...fieldErrors, [id]: "" });
+        }
+
+        // Real-time validation for certain fields
+        if (id === "noHp" && value && !ValidationRules.isValidPhoneNumber(value)) {
+            // Let user type, validation happens on submit
+        }
+    };
+
+    const validateForm = (): boolean => {
+        const errors: Record<string, string> = {};
+
+        // Validate nama
+        if (!formData.nama.trim()) {
+            errors.nama = ValidationRules.getValidationError("nama", "required");
+        } else if (formData.nama.trim().length < 2) {
+            errors.nama = ValidationRules.getValidationError("nama", "minLength");
+        }
+
+        // Validate email
+        if (!formData.email.trim()) {
+            errors.email = ValidationRules.getValidationError("email", "required");
+        } else if (!ValidationRules.isValidEmail(formData.email)) {
+            errors.email = ValidationRules.getValidationError("email", "invalid");
+        }
+
+        // Validate password
+        if (!formData.password) {
+            errors.password = ValidationRules.getValidationError("password", "required");
+        } else if (!ValidationRules.isValidPassword(formData.password)) {
+            errors.password = ValidationRules.getValidationError("password", "weak");
+        }
+
+        // Validate confirmPassword
+        if (!formData.confirmPassword) {
+            errors.confirmPassword = ValidationRules.getValidationError("confirmPassword", "required");
+        } else if (formData.password !== formData.confirmPassword) {
+            errors.confirmPassword = ValidationRules.getValidationError("password", "mismatch");
+        }
+
+        // Validate noHp (optional)
+        if (formData.noHp && !ValidationRules.isValidPhoneNumber(formData.noHp)) {
+            errors.noHp = ValidationRules.getValidationError("noHp", "invalid");
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
-        if (formData.password !== formData.confirmPassword) {
-            setError("Password konfirmasi tidak sesuai");
+        if (!validateForm()) {
             return;
         }
 
@@ -54,8 +107,8 @@ export default function Register() {
             } else {
                 setError(response.message || "Registrasi gagal");
             }
-        } catch (err: any) {
-            setError(err.message || "Terjadi kesalahan saat registrasi");
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, "Terjadi kesalahan saat registrasi"));
         } finally {
             setLoading(false);
         }
@@ -82,6 +135,7 @@ export default function Register() {
                                     icon="fa-user"
                                     value={formData.nama}
                                     onChange={handleChange}
+                                    error={fieldErrors.nama}
                                     required
                                 />
 
@@ -93,6 +147,7 @@ export default function Register() {
                                     icon="fa-envelope"
                                     value={formData.email}
                                     onChange={handleChange}
+                                    error={fieldErrors.email}
                                     required
                                 />
 
@@ -100,10 +155,11 @@ export default function Register() {
                                     label="Nomor Handphone"
                                     type="tel"
                                     id="noHp"
-                                    placeholder="08123456789"
+                                    placeholder="08123456789 atau +628123456789"
                                     icon="fa-phone"
                                     value={formData.noHp}
                                     onChange={handleChange}
+                                    error={fieldErrors.noHp}
                                 />
 
                                 <div className="row g-2">
@@ -112,12 +168,12 @@ export default function Register() {
                                             label="Password"
                                             type="password"
                                             id="password"
-                                            placeholder="******"
+                                            placeholder="6+ karakter"
                                             icon="fa-lock"
                                             value={formData.password}
                                             onChange={handleChange}
+                                            error={fieldErrors.password}
                                             required
-                                            minLength={6}
                                         />
                                     </div>
                                     <div className="col-md-6">
@@ -125,10 +181,11 @@ export default function Register() {
                                             label="Konfirmasi Password"
                                             type="password"
                                             id="confirmPassword"
-                                            placeholder="******"
+                                            placeholder="Ulangi password"
                                             icon="fa-lock"
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
+                                            error={fieldErrors.confirmPassword}
                                             required
                                         />
                                     </div>

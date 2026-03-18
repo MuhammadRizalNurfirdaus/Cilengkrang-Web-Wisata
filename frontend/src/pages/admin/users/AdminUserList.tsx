@@ -4,6 +4,7 @@ import { User } from "../../../types";
 import { fetchApi } from "../../../api/client";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
+import { getErrorMessage } from "../../../utils/error";
 
 export default function AdminUserList() {
     const [page, setPage] = useState(1);
@@ -19,8 +20,8 @@ export default function AdminUserList() {
             await fetchApi(`/users/${id}`, { method: "DELETE" });
             setStatus({ type: "success", message: "User berhasil dihapus" });
             refetch();
-        } catch (err: any) {
-            setStatus({ type: "danger", message: err.message || "Gagal menghapus user" });
+        } catch (err: unknown) {
+            setStatus({ type: "danger", message: getErrorMessage(err, "Gagal menghapus user") });
         }
     }
 

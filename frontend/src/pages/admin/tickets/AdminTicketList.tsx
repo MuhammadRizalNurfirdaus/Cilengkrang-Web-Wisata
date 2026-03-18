@@ -4,6 +4,7 @@ import { PemesananTiket } from "../../../types";
 import { fetchApi } from "../../../api/client";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
+import { getErrorMessage } from "../../../utils/error";
 
 export default function AdminTicketList() {
     const [page, setPage] = useState(1);
@@ -23,8 +24,8 @@ export default function AdminTicketList() {
             });
             setStatus({ type: "success", message: `Status berhasil diubah menjadi ${newStatus}` });
             refetch();
-        } catch (err: any) {
-            setStatus({ type: "danger", message: err.message || "Gagal mengubah status" });
+        } catch (err: unknown) {
+            setStatus({ type: "danger", message: getErrorMessage(err, "Gagal mengubah status") });
         }
     };
 

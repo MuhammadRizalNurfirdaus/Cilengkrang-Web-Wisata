@@ -1,3 +1,5 @@
+import { ApiResponse } from "../types";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
 
 export async function fetchApi<T>(
@@ -23,7 +25,7 @@ export async function fetchApi<T>(
     });
 
     // Handle non-JSON responses (502, HTML error pages, etc.)
-    let data: any;
+    let data: ApiResponse<unknown>;
     try {
         data = await response.json();
     } catch {

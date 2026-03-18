@@ -6,6 +6,7 @@ import { Article } from "../../../types";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
+import { getErrorMessage } from "../../../utils/error";
 
 export default function AdminArticleForm() {
     const { id } = useParams<{ id: string }>();
@@ -65,8 +66,8 @@ export default function AdminArticleForm() {
             });
 
             navigate("/admin/articles");
-        } catch (err: any) {
-            setError(err.message || "Gagal menyimpan artikel");
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, "Gagal menyimpan artikel"));
         } finally {
             setLoading(false);
         }

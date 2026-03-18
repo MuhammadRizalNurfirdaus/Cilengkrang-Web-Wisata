@@ -7,6 +7,16 @@ import { getImageUrl, fetchApi } from "../../api/client";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Alert from "../../components/ui/Alert";
+import { getErrorMessage } from "../../utils/error";
+
+interface BookingSuccessResponse {
+    success: boolean;
+    message?: string;
+    data?: {
+        kodePemesanan?: string;
+    };
+    kodePemesanan?: string;
+}
 
 export default function Booking() {
     const [searchParams] = useSearchParams();
@@ -18,7 +28,7 @@ export default function Booking() {
     const [quantities, setQuantities] = useState<Record<number, number>>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [successData, setSuccessData] = useState<any>(null);
+    const [successData, setSuccessData] = useState<BookingSuccessResponse | null>(null);
 
     const { data: wisata, loading: loadingWisata } = useFetch<Wisata>(
         wisataId ? `/wisata/${wisataId}` : null
@@ -55,7 +65,7 @@ export default function Booking() {
         setError(null);
 
         const items = Object.entries(quantities)
-            .filter(([_, qty]) => qty > 0)
+            .filter(([, qty]) => qty > 0)
             .map(([id, qty]) => ({
                 jenisTiketId: parseInt(id),
                 jumlah: qty
@@ -81,12 +91,12 @@ export default function Booking() {
                 catatan: `Booking Wisata: ${wisata?.nama}`
             };
 
-            await fetchApi("/pemesanan", {
+            await fetchApi<BookingSuccessResponse>("/pemesanan", {
                 method: "POST",
                 body: JSON.stringify(payload)
             }).then(res => setSuccessData(res));
-        } catch (err: any) {
-            setError(err.message || "Gagal membuat pesanan");
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, "Gagal membuat pesanan"));
         } finally {
             setLoading(false);
         }

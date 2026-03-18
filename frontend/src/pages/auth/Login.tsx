@@ -6,10 +6,13 @@ import { AuthResponse } from "../../types";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
+import { getErrorMessage } from "../../utils/error";
+import { ValidationRules } from "../../utils/validation";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
@@ -17,9 +20,45 @@ export default function Login() {
     const { login } = useAuth();
     const navigate = useNavigate();
 
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+        if (fieldErrors.email) {
+            setFieldErrors({ ...fieldErrors, email: "" });
+        }
+    };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+        if (fieldErrors.password) {
+            setFieldErrors({ ...fieldErrors, password: "" });
+        }
+    };
+
+    const validateForm = (): boolean => {
+        const errors: Record<string, string> = {};
+
+        if (!email.trim()) {
+            errors.email = ValidationRules.getValidationError("email", "required");
+        } else if (!ValidationRules.isValidEmail(email)) {
+            errors.email = ValidationRules.getValidationError("email", "invalid");
+        }
+
+        if (!password) {
+            errors.password = ValidationRules.getValidationError("password", "required");
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
+
+        if (!validateForm()) {
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -45,8 +84,8 @@ export default function Login() {
             } else {
                 setError(response.message || "Login gagal");
             }
-        } catch (err: any) {
-            setError(err.message || "Terjadi kesalahan saat login");
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, "Terjasi kesalahan saat login"));
         } finally {
             setLoading(false);
         }
@@ -62,8 +101,8 @@ export default function Login() {
             } else {
                 setError("Gagal mendapatkan URL Google login");
             }
-        } catch (err: any) {
-            setError(err.message || "Gagal memulai login Google");
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, "Gagal memulai login Google"));
             setGoogleLoading(false);
         }
     };
@@ -88,7 +127,8 @@ export default function Login() {
                                     placeholder="nama@email.com"
                                     icon="fa-envelope"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={handleEmailChange}
+                                    error={fieldErrors.email}
                                     required
                                 />
 
@@ -96,10 +136,11 @@ export default function Login() {
                                     label="Password"
                                     type="password"
                                     id="password"
-                                    placeholder="******"
+                                    placeholder="Password Anda"
                                     icon="fa-lock"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={handlePasswordChange}
+                                    error={fieldErrors.password}
                                     required
                                 />
 

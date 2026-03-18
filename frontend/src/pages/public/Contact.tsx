@@ -3,6 +3,8 @@ import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
 import { fetchApi } from "../../api/client";
+import { getErrorMessage } from "../../utils/error";
+import { ValidationRules } from "../../utils/validation";
 
 export default function Contact() {
     const [formData, setFormData] = useState({
@@ -11,13 +13,58 @@ export default function Contact() {
         subjek: "",
         pesan: "",
     });
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<{ type: "success" | "danger"; message: string } | null>(null);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+        if (fieldErrors[id]) {
+            setFieldErrors({ ...fieldErrors, [id]: "" });
+        }
+    };
+
+    const validateForm = (): boolean => {
+        const errors: Record<string, string> = {};
+
+        if (!formData.nama.trim()) {
+            errors.nama = ValidationRules.getValidationError("nama", "required");
+        } else if (formData.nama.trim().length < 2) {
+            errors.nama = ValidationRules.getValidationError("nama", "minLength");
+        }
+
+        if (!formData.email.trim()) {
+            errors.email = ValidationRules.getValidationError("email", "required");
+        } else if (!ValidationRules.isValidEmail(formData.email)) {
+            errors.email = ValidationRules.getValidationError("email", "invalid");
+        }
+
+        if (!formData.subjek.trim()) {
+            errors.subjek = "Subjek wajib diisi";
+        } else if (formData.subjek.trim().length < 3) {
+            errors.subjek = "Subjek minimal 3 karakter";
+        }
+
+        if (!formData.pesan.trim()) {
+            errors.pesan = "Pesan wajib diisi";
+        } else if (formData.pesan.trim().length < 10) {
+            errors.pesan = "Pesan minimal 10 karakter";
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setStatus(null);
+
+        if (!validateForm()) {
+            setLoading(false);
+            return;
+        }
 
         try {
             await fetchApi("/contacts", {
@@ -26,8 +73,8 @@ export default function Contact() {
             });
             setStatus({ type: "success", message: "Pesan Anda telah terkirim! Terima kasih telah menghubungi kami." });
             setFormData({ nama: "", email: "", subjek: "", pesan: "" });
-        } catch (err: any) {
-            setStatus({ type: "danger", message: err.message || "Gagal mengirim pesan." });
+        } catch (err: unknown) {
+            setStatus({ type: "danger", message: getErrorMessage(err, "Gagal mengirim pesan.") });
         } finally {
             setLoading(false);
         }
@@ -93,7 +140,8 @@ export default function Contact() {
                                             label="Nama Lengkap"
                                             id="nama"
                                             value={formData.nama}
-                                            onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                                            onChange={handleChange}
+                                            error={fieldErrors.nama}
                                             required
                                         />
                                     </div>
@@ -103,7 +151,8 @@ export default function Contact() {
                                             type="email"
                                             id="email"
                                             value={formData.email}
-                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                            onChange={handleChange}
+                                            error={fieldErrors.email}
                                             required
                                         />
                                     </div>
@@ -113,21 +162,27 @@ export default function Contact() {
                                     label="Subjek"
                                     id="subjek"
                                     value={formData.subjek}
-                                    onChange={(e) => setFormData({ ...formData, subjek: e.target.value })}
+                                    onChange={handleChange}
+                                    error={fieldErrors.subjek}
                                     placeholder="Apa yang ingin Anda tanyakan?"
+                                    required
                                 />
 
                                 <div className="mb-4">
-                                    <label htmlFor="pesan" className="form-label small fw-medium text-muted uppercase tracking-wide">Pesan</label>
+                                    <label htmlFor="pesan" className="form-label small fw-medium text-muted uppercase tracking-wide">
+                                        Pesan
+                                        {fieldErrors.pesan && <span className="text-danger ms-1">*</span>}
+                                    </label>
                                     <textarea
                                         id="pesan"
                                         rows={6}
-                                        className="form-control"
+                                        className={`form-control ${fieldErrors.pesan ? "is-invalid" : ""}`}
                                         value={formData.pesan}
-                                        onChange={(e) => setFormData({ ...formData, pesan: e.target.value })}
+                                        onChange={handleChange}
                                         required
-                                        placeholder="Tulis pesan Anda di sini..."
+                                        placeholder="Tulis pesan Anda di sini... (minimal 10 karakter)"
                                     ></textarea>
+                                    {fieldErrors.pesan && <div className="invalid-feedback" style={{ display: "block" }}>{fieldErrors.pesan}</div>}
                                 </div>
 
                                 <Button type="submit" variant="success" className="rounded-pill px-4" isLoading={loading}>

@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useFetch } from "../../hooks/useFetch";
 import { fetchApi } from "../../api/client";
-import { PemesananTiket } from "../../types";
+import { DetailPemesananTiket, PemesananTiket } from "../../types";
 import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
+import { getErrorMessage } from "../../utils/error";
 
 export default function History() {
     const { user } = useAuth();
@@ -30,8 +31,8 @@ export default function History() {
             });
             setAlertMsg({ type: "success", text: "Pesanan berhasil dibatalkan." });
             refetch();
-        } catch (err: any) {
-            setAlertMsg({ type: "danger", text: err.message || "Gagal membatalkan pesanan." });
+        } catch (err: unknown) {
+            setAlertMsg({ type: "danger", text: getErrorMessage(err, "Gagal membatalkan pesanan.") });
         } finally {
             setCancellingId(null);
         }
@@ -87,7 +88,7 @@ export default function History() {
                                                     })}
                                                 </p>
                                                 <div className="mt-3">
-                                                    {order.detailPemesanan?.map((detail: any, idx: number) => (
+                                                    {order.detailPemesanan?.map((detail: DetailPemesananTiket, idx: number) => (
                                                         <div key={idx} className="small text-muted mb-1">
                                                             <i className="fas fa-ticket-alt me-2 text-info"></i>
                                                             {detail.jenisTiket?.namaLayananDisplay || "Tiket"} x {detail.jumlah}

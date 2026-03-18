@@ -24,6 +24,7 @@ interface AdminStats {
 
 export default function AdminDashboard() {
     const { data: stats, loading } = useFetch<AdminStats>("/stats/admin");
+    const formatCurrency = (value: number) => `Rp ${value.toLocaleString("id-ID")}`;
 
     const statCards = [
         { title: "Total Wisata", value: stats?.totalWisata ?? 0, icon: "fa-map-location-dot", color: "success", link: "/admin/wisata" },
@@ -77,10 +78,10 @@ export default function AdminDashboard() {
 
             {/* Stats Cards */}
             <div className="row g-3 mb-4">
-                {statCards.map((card, idx) => (
-                    <div key={idx} className="col-6 col-md-4 col-lg-2">
+                {statCards.map((card) => (
+                    <div key={card.title} className="col-6 col-md-4 col-lg-2">
                         <Link to={card.link} className="text-decoration-none">
-                            <div className="card border-0 shadow-sm h-100">
+                            <div className="card border-0 shadow-sm h-100 admin-stat-card">
                                 <div className="card-body text-center py-3">
                                     <div className={`d-inline-flex align-items-center justify-content-center bg-${card.color} bg-opacity-10 rounded-circle mb-2`} style={{ width: "44px", height: "44px" }}>
                                         <i className={`fas ${card.icon} text-${card.color}`}></i>
@@ -95,11 +96,11 @@ export default function AdminDashboard() {
             </div>
 
             {/* Revenue Card */}
-            <div className="card border-0 shadow-sm mb-4" style={{ background: "linear-gradient(135deg, #198754 0%, #0f5132 100%)" }}>
+            <div className="card border-0 shadow-sm mb-4 admin-revenue-card">
                 <div className="card-body p-4 text-white d-flex justify-content-between align-items-center">
                     <div>
                         <p className="mb-1 opacity-75 small">Total Pendapatan</p>
-                        <h2 className="fw-bold mb-0">Rp {(stats?.totalPendapatan ?? 0).toLocaleString("id-ID")}</h2>
+                        <h2 className="fw-bold mb-0">{formatCurrency(stats?.totalPendapatan ?? 0)}</h2>
                     </div>
                     <i className="fas fa-money-bill-wave fa-3x opacity-25"></i>
                 </div>
@@ -155,13 +156,10 @@ export default function AdminDashboard() {
                         </div>
                         <div className="card-body">
                             <div className="row g-2">
-                                {quickMenu.map((item, idx) => (
-                                    <div key={idx} className="col-6">
+                                {quickMenu.map((item) => (
+                                    <div key={item.title} className="col-6">
                                         <Link to={item.link} className="text-decoration-none">
-                                            <div className="border rounded p-3 text-center h-100 quick-menu-item"
-                                                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; }}
-                                                onMouseLeave={e => { e.currentTarget.style.transform = ""; }}
-                                            >
+                                            <div className="border rounded p-3 text-center h-100 quick-menu-item">
                                                 <i className={`fas ${item.icon} fa-lg text-${item.color} mb-2`}></i>
                                                 <div className="small fw-semibold">{item.title}</div>
                                             </div>

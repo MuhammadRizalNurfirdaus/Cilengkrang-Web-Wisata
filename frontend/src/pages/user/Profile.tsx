@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { fetchApi, getImageUrl } from "../../api/client";
 import { User } from "../../types";
 import Alert from "../../components/ui/Alert";
+import { getErrorMessage } from "../../utils/error";
 
 export default function Profile() {
     const { user, login, token } = useAuth();
@@ -42,8 +43,8 @@ export default function Profile() {
             } else {
                 showAlert("danger", res.message || "Gagal memperbarui profil");
             }
-        } catch (err: any) {
-            showAlert("danger", err.message || "Terjadi kesalahan");
+        } catch (err: unknown) {
+            showAlert("danger", getErrorMessage(err, "Terjadi kesalahan"));
         } finally {
             setLoading(false);
         }
@@ -69,8 +70,8 @@ export default function Profile() {
             } else {
                 showAlert("danger", res.message || "Gagal mengubah password");
             }
-        } catch (err: any) {
-            showAlert("danger", err.message || "Terjadi kesalahan");
+        } catch (err: unknown) {
+            showAlert("danger", getErrorMessage(err, "Terjadi kesalahan"));
         } finally {
             setPwLoading(false);
         }
@@ -96,8 +97,8 @@ export default function Profile() {
             } else {
                 showAlert("danger", data.message || "Gagal upload foto");
             }
-        } catch (err: any) {
-            showAlert("danger", err.message || "Gagal upload foto");
+        } catch (err: unknown) {
+            showAlert("danger", getErrorMessage(err, "Gagal upload foto"));
         } finally {
             setPhotoLoading(false);
         }

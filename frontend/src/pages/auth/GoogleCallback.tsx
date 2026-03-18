@@ -3,26 +3,27 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { fetchApi } from "../../api/client";
 import { AuthResponse } from "../../types";
+import { getErrorMessage } from "../../utils/error";
 
 export default function GoogleCallback() {
     const [searchParams] = useSearchParams();
-    const [error, setError] = useState<string | null>(null);
+    const code = searchParams.get("code");
+    const errorParam = searchParams.get("error");
+    const [error, setError] = useState<string | null>(() => {
+        if (errorParam) return "Login Google dibatalkan atau gagal.";
+        if (!code) return "Kode otorisasi tidak ditemukan.";
+        return null;
+    });
     const { login } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        const code = searchParams.get("code");
-        const errorParam = searchParams.get("error");
-
-        if (errorParam) {
-            setError("Login Google dibatalkan atau gagal.");
-            setTimeout(() => navigate("/login"), 3000);
-            return;
+        if (error) {
+            const timeoutId = setTimeout(() => navigate("/login"), 3000);
+            return () => clearTimeout(timeoutId);
         }
 
         if (!code) {
-            setError("Kode otorisasi tidak ditemukan.");
-            setTimeout(() => navigate("/login"), 3000);
             return;
         }
 
@@ -50,15 +51,14 @@ export default function GoogleCallback() {
                 } else {
                     setError(response.message || "Login Google gagal");
                 }
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Google callback error:", err);
-                setError(err.message || "Terjadi kesalahan saat login Google");
-                setTimeout(() => navigate("/login"), 3000);
+                setError(getErrorMessage(err, "Terjadi kesalahan saat login Google"));
             }
         };
 
         exchangeCode();
-    }, [searchParams, login, navigate]);
+    }, [code, error, login, navigate]);
 
     if (error) {
         return (

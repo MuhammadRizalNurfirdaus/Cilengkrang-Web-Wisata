@@ -5,6 +5,7 @@ import { Article } from "../../../types";
 import { getImageUrl, fetchApi } from "../../../api/client";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
+import { getErrorMessage } from "../../../utils/error";
 
 export default function AdminArticleList() {
     const [page, setPage] = useState(1);
@@ -21,8 +22,8 @@ export default function AdminArticleList() {
             await fetchApi(`/articles/${id}`, { method: "DELETE" });
             setStatus({ type: "success", message: "Artikel berhasil dihapus" });
             refetch();
-        } catch (err: any) {
-            setStatus({ type: "danger", message: err.message || "Gagal menghapus artikel" });
+        } catch (err: unknown) {
+            setStatus({ type: "danger", message: getErrorMessage(err, "Gagal menghapus artikel") });
         }
     };
 

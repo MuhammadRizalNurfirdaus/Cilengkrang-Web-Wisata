@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { fetchApi } from "../api/client";
+import { getErrorMessage } from "../utils/error";
 
 interface Pagination {
     page: number;
@@ -32,9 +33,9 @@ export function useFetch<T>(endpoint: string | null, options: UseFetchOptions = 
             } else {
                 throw new Error("Data format invalid");
             }
-        } catch (err: any) {
-            if (err.name === "AbortError") return;
-            setError(err.message || "Something went wrong");
+        } catch (err: unknown) {
+            if (err instanceof Error && err.name === "AbortError") return;
+            setError(getErrorMessage(err, "Something went wrong"));
             console.error(`Fetch error for ${endpoint}:`, err);
         } finally {
             setLoading(false);
