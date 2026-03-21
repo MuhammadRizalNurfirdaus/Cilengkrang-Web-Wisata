@@ -55,9 +55,10 @@ const app = new Elysia()
     // Error handler
     .onError(({ code, error }) => {
         console.error(`Error [${code}]:`, error);
+        const message = error instanceof Error ? error.message : "Terjadi kesalahan server";
         return {
             success: false,
-            message: error.message || "Terjadi kesalahan server",
+            message,
         };
     })
     .listen(process.env.PORT || 3001);

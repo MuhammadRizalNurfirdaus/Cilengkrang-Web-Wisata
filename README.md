@@ -1,729 +1,535 @@
-# 🏔️ Cilengkrang Web Wisata
+# Cilengkrang Web Wisata
 
-<div align="center">
+Aplikasi web fullstack untuk pengelolaan destinasi wisata Cilengkrang, pemesanan tiket, pengelolaan konten artikel, galeri, feedback, serta dashboard operasional multi-role (user, kasir, admin, owner).
 
-![Version](https://img.shields.io/badge/version-2.0.0-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)
-![Bun](https://img.shields.io/badge/Bun-1.0-fbf0df?logo=bun&logoColor=black)
-![Docker](https://img.shields.io/badge/Docker-Compose-2496ed?logo=docker&logoColor=white)
+## Ringkasan
 
-**Aplikasi Web Wisata Lembah Cilengkrang** — Platform digital untuk pengelolaan dan pemesanan tiket wisata alam Cilengkrang, Bandung, Jawa Barat.
+Project ini merupakan modernisasi dari sistem PHP legacy ke stack TypeScript modern:
 
-[Demo](#-akses-aplikasi) · [Instalasi](#-instalasi--setup) · [API Docs](#-api-endpoints) · [Kontribusi](#-kontribusi)
+- Frontend: React + TypeScript + Vite
+- Backend: Bun + Elysia
+- ORM dan database: Prisma ORM + MariaDB
+- Deployment lokal: Docker Compose
 
-</div>
+Repository ini juga menyimpan kode lama di folder `legacy_php/` sebagai referensi historis migrasi.
 
----
+## Fitur Utama
 
-## 📖 Tentang Project
+- Landing page destinasi wisata
+- Daftar dan detail destinasi wisata
+- Daftar dan detail artikel
+- Galeri foto wisata
+- Form kontak
+- Autentikasi JWT (register/login/me)
+- Google OAuth login (opsional)
+- Pemesanan tiket dengan detail item tiket
+- Manajemen pembayaran
+- Manajemen tiket dan jadwal ketersediaan
+- Manajemen sewa alat
+- Feedback/rating pengunjung
+- Dashboard statistik admin dan user
+- Panel manajemen user, wisata, artikel, galeri
+- Upload file gambar (profil, artikel, galeri, wisata)
+- Theme mode (light/dark) di frontend
 
-**Cilengkrang Web Wisata** adalah aplikasi web fullstack untuk mengelola objek wisata Lembah Cilengkrang. Aplikasi ini awalnya dikembangkan menggunakan PHP Native dan telah di-**migrasi secara penuh** ke stack modern berbasis **TypeScript** dengan arsitektur yang lebih scalable dan maintainable.
+## Arsitektur
 
-### Fitur Utama
+### Komponen
 
-| Fitur | Deskripsi |
-|-------|-----------|
-| 🏠 **Landing Page** | Halaman beranda dengan hero video, destinasi populer, artikel, testimonial |
-| 🗺️ **Destinasi Wisata** | Daftar & detail destinasi lengkap dengan galeri foto, fasilitas, jam operasi, lokasi |
-| 🎫 **Pemesanan Tiket** | Sistem booking tiket wisata dengan pilihan jenis tiket (hari kerja/libur) |
-| 📰 **Artikel & Berita** | CMS untuk artikel wisata dengan editor konten, share ke sosial media |
-| 🖼️ **Galeri Foto** | Koleksi foto wisata dengan lightbox viewer & pagination |
-| 📞 **Kontak** | Form kontak dengan validasi, link WhatsApp, email, Google Maps |
-| ⭐ **Feedback & Rating** | Sistem ulasan dan rating dari pengunjung |
-| 🔐 **Multi-Role Auth** | Autentikasi JWT dengan 4 role: User, Kasir, Admin, Owner |
-| 🔑 **Google OAuth** | Login cepat menggunakan akun Google |
-| 📊 **Dashboard Admin** | Statistik real-time, pesanan terkini, grafik pendapatan |
-| 📊 **Dashboard User** | Ringkasan tiket aktif, riwayat pesanan, menu navigasi cepat |
-| 📜 **Riwayat & Cetak Tiket** | Riwayat pemesanan dengan status tracking & pembatalan |
-| 👤 **Profil Pengguna** | Edit profil, upload foto, ubah password |
-| 🏷️ **Manajemen Tiket** | CRUD jenis tiket, jadwal ketersediaan, harga dinamis |
-| 🏕️ **Sewa Alat** | Sistem sewa alat camping/outdoor dengan tracking status |
-| 💳 **Pembayaran** | Tracking status pembayaran dengan multi metode |
-| 🌙 **Dark / Light Mode** | Toggle tema gelap/terang dengan animasi, persistent di localStorage |
-| 📱 **Responsive Design** | Tampilan optimal di desktop, tablet, dan mobile |
+- `frontend/`: aplikasi SPA React yang mengonsumsi API backend
+- `backend/`: REST API Elysia dengan Prisma Client
+- `database/`: SQL bootstrap tambahan
+- `legacy_php/`: kode PHP lama yang tidak digunakan dalam runtime modern
 
----
+### Topologi Docker Compose
 
-## 🛠️ Tech Stack
+Service default dari `docker-compose.yml`:
+
+- `db`: MariaDB 10.11, host port `3307`
+- `backend`: Bun + Elysia, host port `3002` (container `3001`)
+- `frontend`: Vite app, host port `5174` (container `5173`)
+- `adminer`: UI database, host port `8080`
+
+## Tech Stack dan Versi
 
 ### Backend
-| Teknologi | Versi | Deskripsi |
-|-----------|-------|-----------|
-| [Bun](https://bun.sh/) | 1.0+ | JavaScript runtime & package manager (pengganti Node.js) |
-| [ElysiaJS](https://elysiajs.com/) | 1.4 | Framework web TypeScript yang cepat untuk Bun |
-| [Prisma](https://www.prisma.io/) | 6.x | ORM modern untuk TypeScript/JavaScript |
-| [MariaDB](https://mariadb.org/) | 10.11 | Database relasional (MySQL-compatible) |
-| [JWT](https://jwt.io/) | - | Autentikasi berbasis token |
-| [bcrypt](https://github.com/kelektiv/node.bcrypt.js) | 6.x | Hashing password |
+
+- Bun `1.3.x`
+- Elysia `^1.4.28`
+- `@elysiajs/cors` `^1.4.1`
+- `@elysiajs/jwt` `^1.4.1`
+- `@elysiajs/static` `^1.4.7`
+- Prisma `^7.5.0`
+- `@prisma/client` `^7.5.0`
+- `@prisma/adapter-mariadb` `^7.5.0`
+- bcrypt `^6.0.0`
 
 ### Frontend
-| Teknologi | Versi | Deskripsi |
-|-----------|-------|-----------|
-| [React](https://react.dev/) | 19 | UI library utama |
-| [Vite](https://vitejs.dev/) | 7.2 | Build tool & dev server |
-| [TypeScript](https://www.typescriptlang.org/) | 5.9 | Type safety |
-| [React Router](https://reactrouter.com/) | 6.30 | Client-side routing (SPA) |
-| [Bootstrap 5](https://getbootstrap.com/) | 5.3 | CSS framework |
-| [Font Awesome](https://fontawesome.com/) | 6.4 | Icon library |
 
-### DevOps
-| Teknologi | Deskripsi |
-|-----------|-----------|
-| [Docker](https://www.docker.com/) | Containerization |
-| [Docker Compose](https://docs.docker.com/compose/) | Multi-container orchestration |
-| [Adminer](https://www.adminer.org/) | Database admin UI |
+- React `^19.2.0`
+- React DOM `^19.2.0`
+- React Router DOM `^6.30.3`
+- TypeScript `~5.9.3`
+- Vite `^8.0.1`
+- `@vitejs/plugin-react` `^6.0.1`
+- ESLint `^9.39.4`
 
----
+### Infrastruktur
 
-## 📂 Struktur Project
+- Docker + Docker Compose
+- MariaDB 10.11
+- Adminer
 
-```
-Cilengkrang-Web-Wisata/
-├── 📄 docker-compose.yml        # Konfigurasi Docker (4 services)
-├── 📄 .env.example              # Template environment variables
-├── 📄 package.json              # Root package (scripts orchestrator)
-│
-├── 📁 backend/                  # ⚙️ API Server (Bun + ElysiaJS)
-│   ├── Dockerfile               # Container image backend
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── prisma/
-│   │   ├── schema.prisma        # Database schema (15 model, 6 enum)
-│   │   └── seed.ts              # Seed data awal
+## Struktur Repository
+
+```text
+.
+├── docker-compose.yml
+├── README.md
+├── package.json
+├── test_e2e.sh
+├── backend/
 │   ├── src/
-│   │   ├── index.ts             # Entry point server
-│   │   ├── db.ts                # Prisma client instance
-│   │   ├── middleware/          # (Reserved untuk middleware)
-│   │   ├── routes/              # API route handlers
-│   │   │   ├── auth.ts          # Login, register, Google OAuth
-│   │   │   ├── wisata.ts        # CRUD destinasi wisata
-│   │   │   ├── articles.ts      # CRUD artikel
-│   │   │   ├── galeri.ts        # CRUD galeri foto
-│   │   │   ├── pemesanan.ts     # Pemesanan tiket
-│   │   │   ├── jenisTiket.ts    # Jenis tiket & harga
-│   │   │   ├── jadwal.ts        # Jadwal ketersediaan tiket
-│   │   │   ├── pembayaran.ts    # Pembayaran
-│   │   │   ├── sewaAlat.ts      # Sewa alat outdoor
-│   │   │   ├── feedback.ts      # Feedback & rating
-│   │   │   ├── contacts.ts      # Pesan kontak
-│   │   │   ├── users.ts         # Manajemen user
-│   │   │   └── stats.ts         # Dashboard statistik
-│   │   └── utils/               # Helper functions
-│   └── uploads/                 # File upload storage
-│       ├── articles/
-│       ├── artikel/
-│       ├── galeri/
-│       ├── profil/
-│       └── wisata/
-│
-├── 📁 frontend/                 # 🎨 Client App (React + Vite)
-│   ├── Dockerfile               # Container image frontend
-│   ├── package.json
-│   ├── vite.config.ts
-│   ├── index.html               # SPA entry point
-│   ├── public/                  # Static assets
-│   │   └── img/
-│   └── src/
-│       ├── main.tsx             # React app bootstrap
-│       ├── App.tsx              # Root component & routing
-│       ├── api/
-│       │   └── client.ts        # HTTP API client (fetch wrapper)
-│       ├── context/
-│       │   ├── AuthContext.tsx   # Authentication state
-│       │   └── ThemeContext.tsx  # Dark/Light mode state
-│       ├── hooks/
-│       │   └── useFetch.ts      # Custom data fetching hook
-│       ├── components/
-│       │   ├── ErrorBoundary.tsx     # Error boundary global
-│       │   ├── layout/
-│       │   │   ├── Navbar.tsx       # Navbar publik (theme-aware)
-│       │   │   ├── Footer.tsx       # Footer dengan links
-│       │   │   └── AdminLayout.tsx  # Sidebar admin panel
-│       │   ├── sections/
-│       │   │   ├── HeroVideo.tsx    # Hero section dengan video
-│       │   │   ├── Destinations.tsx # Destinasi populer
-│       │   │   ├── Features.tsx     # Fitur unggulan
-│       │   │   ├── Articles.tsx     # Artikel terbaru
-│       │   │   └── Testimonials.tsx # Testimonial pengunjung
-│       │   └── ui/
-│       │       ├── Alert.tsx        # Alert notification
-│       │       ├── Button.tsx       # Reusable button
-│       │       ├── Card.tsx         # Reusable card
-│       │       ├── Input.tsx        # Form input
-│       │       ├── ThemeToggle.css  # Animasi tombol tema
-│       │       └── ThemeToggleButton.tsx # Tombol dark/light mode
-│       ├── pages/
-│       │   ├── auth/
-│       │   │   ├── Login.tsx        # Halaman login
-│       │   │   ├── Register.tsx     # Halaman registrasi
-│       │   │   ├── Logout.tsx       # Proses logout
-│       │   │   └── GoogleCallback.tsx # Google OAuth callback
-│       │   ├── public/
-│       │   │   ├── Home.tsx             # Beranda
-│       │   │   ├── AllDestinations.tsx  # Semua destinasi
-│       │   │   ├── DestinationDetail.tsx # Detail destinasi
-│       │   │   ├── ArticleList.tsx      # Daftar artikel
-│       │   │   ├── ArticleDetail.tsx    # Detail artikel
-│       │   │   ├── Gallery.tsx          # Galeri foto
-│       │   │   └── Contact.tsx          # Halaman kontak
-│       │   ├── user/
-│       │   │   ├── UserDashboard.tsx     # Dashboard user
-│       │   │   ├── Booking.tsx          # Form pemesanan tiket
-│       │   │   ├── History.tsx          # Riwayat pemesanan
-│       │   │   └── Profile.tsx          # Profil pengguna
-│       │   └── admin/
-│       │       ├── AdminDashboard.tsx    # Dashboard admin
-│       │       ├── wisata/              # CRUD wisata
-│       │       ├── articles/            # CRUD artikel
-│       │       ├── tickets/             # Kelola tiket
-│       │       └── users/               # Kelola user
-│       ├── types/                   # TypeScript type definitions
-│       └── assets/
-│           └── css/
-│               └── style.css        # Stylesheet utama + dark mode
-│
-├── 📁 legacy_php/               # 📜 Kode PHP lama (referensi)
-│   ├── admin/                   # Panel admin PHP
-│   ├── controllers/             # PHP controllers
-│   ├── models/                  # PHP models
-│   ├── config/                  # Konfigurasi database PHP
-│   └── database/                # SQL dump asli
-│
-└── 📁 database/                 # Database scripts
+│   │   ├── index.ts
+│   │   ├── db.ts
+│   │   ├── routes/
+│   │   └── utils/
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── seed.ts
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── types/
+│   │   └── utils/
+│   └── package.json
+├── database/
+└── legacy_php/
 ```
 
----
+## Environment Variables
 
-## 🚀 Instalasi & Setup
-
-### Prasyarat
-
-Pastikan software berikut sudah terinstal di komputer Anda:
-
-| Software | Versi Minimum | Link Download |
-|----------|---------------|---------------|
-| **Git** | 2.x | [git-scm.com](https://git-scm.com/) |
-| **Docker** | 20.x | [docker.com](https://www.docker.com/get-started) |
-| **Docker Compose** | 2.x | (Sudah termasuk di Docker Desktop) |
-
-> **💡 Tips:** Jika Anda menggunakan Docker Desktop (Windows/Mac), Docker Compose sudah otomatis terinstal.
-
----
-
-### Langkah 1: Clone Repository
+Salin `.env.example` menjadi `.env` di root project.
 
 ```bash
-# Clone project dari GitHub
-git clone https://github.com/MuhammadRizalNurfirdaus/Cilengkrang-Web-Wisata.git
-
-# Masuk ke direktori project
-cd Cilengkrang-Web-Wisata
-```
-
----
-
-### Langkah 2: Konfigurasi Environment
-
-```bash
-# Salin file environment template
 cp .env.example .env
 ```
 
-Buka file `.env` dan sesuaikan konfigurasi:
+Daftar variabel utama:
 
-```env
-# ============================
-# DATABASE
-# ============================
-MYSQL_ROOT_PASSWORD=rootpassword
-MYSQL_DATABASE=cilengkrang_web_wisata_ts
-MYSQL_USER=user
-MYSQL_PASSWORD=password
+### Database
 
-# ============================
-# BACKEND
-# ============================
-DATABASE_URL=mysql://user:password@db:3306/cilengkrang_web_wisata_ts
-JWT_SECRET=ganti-dengan-secret-key-anda-yang-kuat
-PORT=3001
+- `MYSQL_ROOT_PASSWORD`
+- `MYSQL_DATABASE`
+- `MYSQL_USER`
+- `MYSQL_PASSWORD`
 
-# ============================
-# GOOGLE OAUTH (Opsional)
-# ============================
-# Dapatkan credentials di: https://console.cloud.google.com/
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URI=http://localhost:5174/auth/google/callback
-FRONTEND_URL=http://localhost:5174
+### Backend
 
-# ============================
-# FRONTEND
-# ============================
-VITE_API_URL=http://localhost:3002/api
-```
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `PORT`
 
-> **⚠️ Penting:**
-> - Ganti `JWT_SECRET` dengan string acak yang kuat untuk keamanan.
-> - Google OAuth bersifat opsional. Login email/password tetap berfungsi tanpa konfigurasi Google.
-> - `DATABASE_URL` harus menggunakan hostname `db` (bukan `localhost`) karena berjalan di dalam Docker network.
+### Google OAuth (opsional)
 
----
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REDIRECT_URI`
+- `FRONTEND_URL`
 
-### Langkah 3: Jalankan dengan Docker
+### Frontend
+
+- `VITE_API_URL`
+
+Contoh default ada di `.env.example`.
+
+## Cara Menjalankan
+
+## 1. Menjalankan dengan Docker (direkomendasikan)
+
+### Prasyarat
+
+- Docker
+- Docker Compose
+
+### Langkah
 
 ```bash
-# Build dan jalankan semua containers (database, backend, frontend, adminer)
+# dari root repository
 docker compose up -d --build
+```
 
-# Tunggu semua container ready (±30 detik)
+Verifikasi service:
+
+```bash
 docker compose ps
 ```
 
-Output yang diharapkan:
+Akses aplikasi:
 
-```
-NAME                   STATUS              PORTS
-cilengkrang_db         running (healthy)   0.0.0.0:3307->3306/tcp
-cilengkrang_backend    running             0.0.0.0:3002->3001/tcp
-cilengkrang_frontend   running             0.0.0.0:5174->5173/tcp
-cilengkrang_adminer    running             0.0.0.0:8080->8080/tcp
-```
+- Frontend: `http://localhost:5174`
+- Backend API: `http://localhost:3002/api`
+- Health check: `http://localhost:3002/api/health`
+- Adminer: `http://localhost:8080`
 
----
-
-### Langkah 4: Setup Database (Push Schema & Seed)
+### Inisialisasi Prisma (saat pertama kali)
 
 ```bash
-# Masuk ke container backend
-docker exec -it cilengkrang_backend sh
+# generate client
+cd backend && bunx prisma generate
 
-# Di dalam container, push Prisma schema ke database
-bun prisma db push
+# push schema ke database
+cd backend && bunx prisma db push
 
-# (Opsional) Isi data awal (destinasi, tiket, user demo)
-bun prisma db seed
-
-# Keluar dari container
-exit
+# seed data demo (opsional)
+cd backend && bun run prisma/seed.ts
 ```
 
-> **📌 Catatan:** Perintah `bun prisma db seed` akan membuat akun demo berikut:
+Catatan:
 
-| Role | Email | Password |
-|------|-------|----------|
-| **Admin** | `admin12345@gmail.com` | `password123` |
-| **Kasir** | `kasir12345@gmail.com` | `password123` |
-| **Owner** | `owner@cilengkrang.com` | `password123` |
-| **User** | `user@cilengkrang.com` | `password123` |
+- Pada Prisma 7, URL datasource dikelola via `backend/prisma.config.ts`.
+- Koneksi runtime Prisma menggunakan adapter MariaDB di `backend/src/db.ts`.
 
----
+## 2. Menjalankan secara Lokal (tanpa Docker)
 
-### Langkah 5: Akses Aplikasi! 🎉
+### Prasyarat
 
-| Service | URL | Keterangan |
-|---------|-----|------------|
-| 🌐 **Frontend** | [http://localhost:5174](http://localhost:5174) | Website utama |
-| ⚙️ **Backend API** | [http://localhost:3002/api](http://localhost:3002/api) | REST API |
-| 🏥 **Health Check** | [http://localhost:3002/api/health](http://localhost:3002/api/health) | Status server |
-| 🗄️ **Adminer** | [http://localhost:8080](http://localhost:8080) | Database admin UI |
+- Bun `>=1.3`
+- Node.js `>=20.19` (disarankan untuk Vite 8)
+- npm `>=10`
+- MariaDB/MySQL aktif di lokal
 
-**Login Adminer:**
-- System: `MySQL`
-- Server: `db`
-- Username: `user`
-- Password: `password`
-- Database: `cilengkrang_web_wisata_ts`
-
----
-
-## 💻 Development (Tanpa Docker)
-
-Jika ingin menjalankan tanpa Docker, pastikan terinstal:
-- [Bun](https://bun.sh/) v1.0+ (backend)
-- [Node.js](https://nodejs.org/) v20+ (frontend)
-- [MariaDB](https://mariadb.org/) atau [MySQL](https://www.mysql.com/) 8.0+ (database)
+### Langkah backend
 
 ```bash
-# 1. Setup database — Buat database MySQL/MariaDB bernama 'cilengkrang_web_wisata_ts'
-
-# 2. Update DATABASE_URL di .env ke koneksi lokal:
-#    DATABASE_URL=mysql://root:password@localhost:3306/cilengkrang_web_wisata_ts
-
-# 3. Setup Backend
 cd backend
 bun install
-bun prisma generate
-bun prisma db push
-bun prisma db seed     # Opsional: data demo
-cd ..
+bunx prisma generate
+bunx prisma db push
+bun run prisma/seed.ts  # opsional
+bun run dev
+```
 
-# 4. Setup Frontend
+Backend default berjalan di `http://localhost:3001`.
+
+### Langkah frontend
+
+```bash
 cd frontend
 npm install
-cd ..
-
-# 5. Jalankan (dari root directory)
-npm install            # Install concurrently
-npm run dev:all        # Jalankan backend + frontend bersamaan
+npm run dev
 ```
 
-Akses di:
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:3001/api`
+Frontend default berjalan di `http://localhost:5173`.
 
----
+## NPM Scripts
 
-## 📡 API Endpoints
+### Root scripts (`package.json`)
 
-### 🔓 Public (Tanpa Login)
+- `npm run dev:backend` - jalankan backend dev
+- `npm run dev:frontend` - jalankan frontend dev
+- `npm run dev:all` - jalankan backend + frontend paralel
+- `npm run docker:up` - start compose
+- `npm run docker:down` - stop compose
+- `npm run docker:logs` - follow logs compose
+- `npm run prisma:generate` - prisma generate (backend)
+- `npm run prisma:push` - prisma db push (backend)
+- `npm run prisma:studio` - prisma studio (backend)
+- `npm run setup` - docker up + prisma generate + prisma push
+- `npm run build:frontend` - build frontend production
 
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| `GET` | `/api/health` | Health check status server |
-| `GET` | `/api/wisata` | Daftar semua destinasi wisata |
-| `GET` | `/api/wisata/:id` | Detail destinasi by ID |
-| `GET` | `/api/wisata/slug/:slug` | Detail destinasi by slug |
-| `GET` | `/api/artikel` | Daftar artikel/berita |
-| `GET` | `/api/artikel/:id` | Detail artikel by ID |
-| `GET` | `/api/artikel/slug/:slug` | Detail artikel by slug |
-| `GET` | `/api/galeri` | Galeri foto (dengan pagination) |
-| `GET` | `/api/feedback` | Daftar feedback/testimonial |
-| `GET` | `/api/jenis-tiket` | Daftar jenis tiket & harga |
-| `POST` | `/api/contacts` | Kirim pesan kontak |
+### Backend scripts (`backend/package.json`)
 
-### 🔑 Autentikasi
+- `bun run dev`
+- `bun run start`
+- `bun run db:push`
+- `bun run db:generate`
+- `bun run db:studio`
+- `bun run db:seed`
 
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| `POST` | `/api/auth/register` | Registrasi akun baru |
-| `POST` | `/api/auth/login` | Login (email + password) |
-| `GET` | `/api/auth/me` | Profil user yang sedang login |
-| `GET` | `/api/auth/google` | Redirect ke Google OAuth |
-| `GET` | `/api/auth/google/callback` | Callback Google OAuth |
+### Frontend scripts (`frontend/package.json`)
 
-### 👤 User (Login Required)
+- `npm run dev`
+- `npm run build`
+- `npm run lint`
+- `npm run preview`
 
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| `PUT` | `/api/users/:id` | Update profil user |
-| `PUT` | `/api/users/:id/password` | Ubah password |
-| `POST` | `/api/users/:id/foto` | Upload foto profil |
-| `GET` | `/api/pemesanan` | Riwayat pemesanan user |
-| `POST` | `/api/pemesanan` | Buat pemesanan tiket baru |
-| `PUT` | `/api/pemesanan/:id/cancel` | Batalkan pemesanan |
-| `GET` | `/api/stats/user/:userId` | Statistik dashboard user |
-| `POST` | `/api/feedback` | Kirim feedback/rating |
+## API Reference
 
-### 🛡️ Admin / Kasir / Owner
+Semua route backend digabung di prefix `/api` dari `backend/src/index.ts`.
 
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| `GET` | `/api/stats/admin` | Statistik dashboard admin |
-| `POST` | `/api/wisata` | Tambah destinasi baru |
-| `PUT` | `/api/wisata/:id` | Update destinasi |
-| `DELETE` | `/api/wisata/:id` | Hapus destinasi |
-| `POST` | `/api/artikel` | Tambah artikel baru |
-| `PUT` | `/api/artikel/:id` | Update artikel |
-| `DELETE` | `/api/artikel/:id` | Hapus artikel |
-| `POST` | `/api/galeri` | Upload foto galeri |
-| `DELETE` | `/api/galeri/:id` | Hapus foto galeri |
-| `GET` | `/api/users` | Daftar semua user |
-| `PUT` | `/api/users/:id/role` | Ubah role user |
-| `DELETE` | `/api/users/:id` | Hapus user |
-| `POST` | `/api/jenis-tiket` | Tambah jenis tiket |
-| `PUT` | `/api/jenis-tiket/:id` | Update jenis tiket |
-| `DELETE` | `/api/jenis-tiket/:id` | Hapus jenis tiket |
-| `GET` | `/api/jadwal` | Daftar jadwal ketersediaan |
-| `POST` | `/api/jadwal` | Buat jadwal ketersediaan |
-| `GET` | `/api/pembayaran` | Daftar pembayaran |
-| `PUT` | `/api/pembayaran/:id` | Update status pembayaran |
-| `GET` | `/api/sewa-alat` | Daftar alat sewa |
-| `POST` | `/api/sewa-alat` | Tambah alat sewa |
+### Health
 
----
+- `GET /api/health`
 
-## 🗃️ Database Schema
+### Auth (`/api/auth`)
 
-### Model & Relasi
+- `GET /google/url`
+- `POST /google/callback`
+- `POST /register`
+- `POST /login`
+- `GET /me`
 
-```
-┌──────────────┐    ┌─────────────────┐    ┌────────────────────┐
-│     User     │───▶│ PemesananTiket  │───▶│DetailPemesananTiket│
-│              │    │                 │    │                    │
-│ - nama       │    │ - kodePemesanan │    │ - jumlah           │
-│ - email      │    │ - tanggalKunj.  │    │ - hargaSatuan      │
-│ - password   │    │ - totalHarga    │    │ - subtotalItem     │
-│ - role       │    │ - status        │    └────────────────────┘
-│ - fotoProfil │    └─────┬───────────┘              │
-└──────────────┘          │                          ▼
-       │            ┌─────┴──────┐          ┌──────────────┐
-       │            │ Pembayaran │          │  JenisTiket  │
-       ▼            │            │          │              │
-┌──────────────┐    │ - metode   │          │ - namaDisplay│
-│   Feedback   │    │ - jumlah   │          │ - tipeHari   │
-│              │    │ - status   │          │ - harga      │
-│ - rating     │    │ - bukti    │          └──────────────┘
-│ - komentar   │    └────────────┘                 │
-└──────────────┘                                   ▼
-                    ┌──────────────────────────────────────┐
-┌──────────────┐    │     JadwalKetersediaanTiket          │
-│    Wisata    │    │                                      │
-│              │    │ - tanggal                             │
-│ - nama       │    │ - jumlahTotalTersedia                │
-│ - deskripsi  │    │ - jumlahSaatIniTersedia              │
-│ - gambar     │    └──────────────────────────────────────┘
-│ - lokasi     │
-│ - fasilitas  │    ┌──────────────┐    ┌───────────────────┐
-│ - jamOperasi │    │   SewaAlat   │───▶│ PemesananSewaAlat │
-└──────────────┘    │              │    │                   │
-       │            │ - namaItem   │    │ - jumlah          │
-       ▼            │ - hargaSewa  │    │ - tanggalMulai    │
-┌──────────────┐    │ - stok       │    │ - totalHarga      │
-│    Galeri    │    │ - kondisi    │    │ - statusSewa      │
-│              │    └──────────────┘    └───────────────────┘
-│ - namaFile   │
-│ - keterangan │    ┌──────────────┐    ┌───────────────────┐
-└──────────────┘    │   Article    │    │  PengaturanSitus  │
-                    │              │    │                   │
-┌──────────────┐    │ - judul      │    │ - key             │
-│   Contact    │    │ - isi        │    │ - value           │
-│              │    │ - ringkasan  │    └───────────────────┘
-│ - nama       │    │ - gambar     │
-│ - email      │    │ - published  │    ┌───────────────────┐
-│ - subjek     │    └──────────────┘    │    Aktivitas      │
-│ - pesan      │                        │                   │
-└──────────────┘                        │ - aksi            │
-                                        │ - detail          │
-                                        │ - ipAddress       │
-                                        └───────────────────┘
-```
+### Users (`/api/users`)
 
-### Enum (Status)
+- `GET /`
+- `GET /:id`
+- `POST /`
+- `PUT /:id`
+- `DELETE /:id`
+- `POST /:id/photo`
 
-| Enum | Values |
-|------|--------|
-| `StatusPemesanan` | PENDING, WAITING_PAYMENT, PAID, CONFIRMED, COMPLETED, CANCELLED, EXPIRED |
-| `StatusPembayaran` | PENDING, SUCCESS, FAILED, EXPIRED, REFUNDED, AWAITING_CONFIRMATION |
-| `TipeHari` | HARI_KERJA, HARI_LIBUR, SEMUA_HARI |
-| `SatuanDurasi` | JAM, HARI, PEMINJAMAN |
-| `KondisiAlat` | BAIK, RUSAK_RINGAN, PERLU_PERBAIKAN, HILANG |
-| `StatusItemSewa` | DIPESAN, DIAMBIL, DIKEMBALIKAN, HILANG, RUSAK, DIBATALKAN |
+### Wisata (`/api/wisata`)
 
----
+- `GET /`
+- `GET /popular`
+- `GET /slug/:slug`
+- `GET /:id`
+- `POST /`
+- `PUT /:id`
+- `DELETE /:id`
 
-## 🎨 Fitur Dark Mode
+### Articles (`/api/articles`)
 
-Aplikasi mendukung **tema gelap dan terang** yang dapat ditoggle dengan tombol mengambang di pojok kanan bawah.
+- `GET /`
+- `GET /latest`
+- `GET /slug/:slug`
+- `GET /:id`
+- `POST /`
+- `PUT /:id`
+- `DELETE /:id`
 
-- **Persistent** — Preferensi tema disimpan di `localStorage`
-- **System-aware** — Otomatis mengikuti preferensi sistem operasi saat pertama kali
-- **Smooth transition** — Animasi halus saat berganti tema
-- **Full coverage** — Semua komponen (navbar, card, form, tabel, modal, sidebar admin) sudah di-support
-- **Animated button** — Tombol FAB dengan ikon matahari/bulan animasi SVG
+### Galeri (`/api/galeri`)
 
----
+- `GET /`
+- `GET /:id`
+- `POST /`
+- `PUT /:id`
+- `DELETE /:id`
 
-## 📸 Halaman Aplikasi
+### Contacts (`/api/contacts`)
 
-| Halaman | Route | Deskripsi |
-|---------|-------|-----------|
-| Beranda | `/` | Hero video, destinasi populer, fitur, artikel, testimonial |
-| Destinasi | `/destinations` | Semua destinasi wisata dengan pagination |
-| Detail Destinasi | `/destinations/:id` | Detail destinasi, tiket, galeri, peta |
-| Artikel | `/articles` | Daftar semua artikel |
-| Detail Artikel | `/articles/:id` | Detail artikel dengan share social media |
-| Galeri | `/gallery` | Galeri foto wisata |
-| Kontak | `/contact` | Form kontak dan info lokasi |
-| Login | `/login` | Login (email/password + Google OAuth) |
-| Registrasi | `/register` | Registrasi akun baru |
-| Google Callback | `/auth/google/callback` | Callback Google OAuth |
-| Dashboard User | `/user/dashboard` | Statistik, menu navigasi cepat |
-| Pemesanan | `/booking` | Form pemesanan tiket wisata |
-| Riwayat | `/user/history` | Riwayat pemesanan + cancel |
-| Profil User | `/user/profile` | Edit profil, foto, password |
-| Dashboard Admin | `/admin/dashboard` | 10 metrik, pesanan terkini, quick menu |
-| Kelola Wisata | `/admin/wisata` | CRUD destinasi wisata |
-| Tambah Wisata | `/admin/wisata/create` | Form tambah destinasi |
-| Edit Wisata | `/admin/wisata/edit/:id` | Form edit destinasi |
-| Kelola Artikel | `/admin/articles` | CRUD artikel |
-| Tambah Artikel | `/admin/articles/create` | Form tambah artikel |
-| Edit Artikel | `/admin/articles/edit/:id` | Form edit artikel |
-| Kelola Tiket | `/admin/tickets` | Kelola jenis tiket |
-| Kelola User | `/admin/users` | Kelola user & role |
-| Kelola Galeri | `/admin/galeri` | Manajemen galeri foto |
-| Kelola Feedback | `/admin/feedback` | Manajemen feedback |
-| Profil Admin | `/admin/profile` | Edit profil admin |
-| Dashboard Kasir | `/kasir/dashboard` | Dashboard kasir |
-| Pemesanan Kasir | `/kasir/pemesanan` | Kelola pemesanan tiket |
-| Pembayaran Kasir | `/kasir/pembayaran` | Kelola pembayaran |
-| Profil Kasir | `/kasir/profile` | Edit profil kasir |
-| Dashboard Owner | `/owner/dashboard` | Dashboard owner |
-| Laporan Owner | `/owner/laporan` | Laporan & analytics |
-| Profil Owner | `/owner/profile` | Edit profil owner |
+- `GET /`
+- `GET /:id`
+- `POST /`
+- `DELETE /:id`
 
----
+### Feedback (`/api/feedback`)
 
-## 🔐 Sistem Role & Akses
+- `GET /`
+- `POST /`
+- `DELETE /:id`
 
-| Fitur | User | Kasir | Admin | Owner |
-|-------|:----:|:-----:|:-----:|:-----:|
-| Lihat destinasi & artikel | ✅ | ✅ | ✅ | ✅ |
-| Pesan tiket | ✅ | ✅ | ✅ | ✅ |
-| Dashboard user | ✅ | ✅ | ✅ | ✅ |
-| Edit profil | ✅ | ✅ | ✅ | ✅ |
-| Dashboard kasir | ❌ | ✅ | ❌ | ❌ |
-| Kelola pemesanan & pembayaran | ❌ | ✅ | ✅ | ✅ |
-| Dashboard admin | ❌ | ❌ | ✅ | ✅ |
-| Kelola wisata | ❌ | ❌ | ✅ | ✅ |
-| Kelola artikel | ❌ | ❌ | ✅ | ✅ |
-| Kelola tiket | ❌ | ✅ | ✅ | ✅ |
-| Kelola user | ❌ | ❌ | ✅ | ✅ |
-| Kelola galeri & feedback | ❌ | ❌ | ✅ | ✅ |
-| Dashboard owner & laporan | ❌ | ❌ | ❌ | ✅ |
+### Jenis Tiket (`/api/jenis-tiket`)
 
----
+- `GET /`
+- `GET /:id`
+- `POST /`
+- `PUT /:id`
+- `DELETE /:id`
 
-## 🔧 Perintah Berguna
+### Jadwal (`/api/jadwal`)
 
-### Docker
+- `GET /`
+- `GET /:id`
+- `PUT /:id/availability`
+
+### Pemesanan (`/api/pemesanan`)
+
+- `GET /`
+- `GET /user/:userId`
+- `GET /:id`
+- `GET /kode/:kode`
+- `POST /`
+- `PUT /:id/status`
+- `DELETE /:id`
+
+### Pembayaran (`/api/pembayaran`)
+
+- `GET /`
+- `GET /:id`
+- `POST /`
+- `PUT /:id`
+- `DELETE /:id`
+
+### Sewa Alat (`/api/sewa-alat`)
+
+- `GET /`
+- `GET /available`
+- `GET /:id`
+- `POST /`
+- `PUT /:id`
+- `DELETE /:id`
+
+### Stats (`/api/stats`)
+
+- `GET /admin`
+- `GET /user/:userId`
+
+## Database Model
+
+Prisma schema berada di `backend/prisma/schema.prisma`.
+
+### Models
+
+- `User`
+- `Article`
+- `Contact`
+- `Feedback`
+- `Galeri`
+- `Wisata`
+- `JenisTiket`
+- `JadwalKetersediaanTiket`
+- `PemesananTiket`
+- `DetailPemesananTiket`
+- `Pembayaran`
+- `SewaAlat`
+- `PemesananSewaAlat`
+- `PengaturanSitus`
+- `Aktivitas`
+
+### Enums
+
+- `TipeHari`
+- `StatusPemesanan`
+- `StatusPembayaran`
+- `SatuanDurasi`
+- `KondisiAlat`
+- `StatusItemSewa`
+
+## Seed Data Demo
+
+File seed: `backend/prisma/seed.ts`.
+
+Akun yang dibuat oleh seed:
+
+- Admin: `admin12345@gmail.com` / `password123`
+- Kasir: `kasir12345@gmail.com` / `password123`
+- Owner: `owner@cilengkrang.com` / `password123`
+- User: `user@cilengkrang.com` / `password123`
+
+Selain user, seed juga menambahkan:
+
+- Data wisata contoh
+- Jenis tiket contoh
+- Artikel contoh
+- Data sewa alat contoh
+- Pengaturan situs
+
+## Validasi Kualitas Kode
+
+### Frontend
 
 ```bash
-docker compose up -d --build   # Build & start semua containers
-docker compose down            # Stop semua containers
-docker compose ps              # Lihat status containers
-docker compose logs -f         # Lihat logs semua services
-docker compose logs backend    # Lihat logs backend saja
-docker compose restart backend # Restart backend
+cd frontend
+npm run lint
+npm run build
 ```
 
-### Prisma (di dalam container backend)
+### Backend
 
 ```bash
-docker exec -it cilengkrang_backend sh   # Masuk ke container
-
-bun prisma studio              # Buka Prisma Studio (GUI database)
-bun prisma db push             # Sinkronisasi schema ke database
-bun prisma generate            # Generate Prisma Client
-bun prisma db seed             # Jalankan seed data
+cd backend
+bunx prisma generate
+bunx tsc --noEmit -p tsconfig.json
 ```
 
-### Development
+### E2E helper (opsional)
 
 ```bash
-npm run dev:all                # Jalankan backend + frontend (tanpa Docker)
-npm run dev:backend            # Jalankan backend saja
-npm run dev:frontend           # Jalankan frontend saja
-npm run build:frontend         # Build production frontend
+./test_e2e.sh
 ```
 
----
+## Troubleshooting
 
-## 🐛 Troubleshooting
+### 1. Backend tidak bisa konek database
 
-### Container tidak mau start?
+- Pastikan `DATABASE_URL` benar
+- Jika Docker dipakai, hostname DB adalah `db` (bukan `localhost`)
+- Cek status database dengan `docker compose ps`
+
+### 2. Prisma error setelah upgrade
+
+Pastikan konfigurasi Prisma 7 terpenuhi:
+
+- URL datasource di `backend/prisma.config.ts`
+- `schema.prisma` datasource tanpa `url`
+- Runtime PrismaClient menggunakan `@prisma/adapter-mariadb`
+
+Lalu regenerate:
 
 ```bash
-# Lihat error logs
-docker compose logs backend --tail 50
-
-# Restart semua
-docker compose down && docker compose up -d --build
+cd backend
+bunx prisma generate
 ```
 
-### Database error / tabel tidak ditemukan?
+### 3. Frontend tidak memanggil API yang benar
 
-```bash
-# Re-push schema
-docker exec -it cilengkrang_backend sh -c "bun prisma db push"
-```
+- Pastikan `VITE_API_URL` diarahkan ke backend aktif
+- Untuk Docker default: `http://localhost:3002/api`
+- Untuk lokal langsung backend: `http://localhost:3001/api`
 
-### Port sudah digunakan?
+### 4. Port bentrok
 
-```bash
-# Cek port yang digunakan
-lsof -i :3002   # Backend
-lsof -i :5174   # Frontend
-lsof -i :3307   # Database
+Ubah port mapping di `docker-compose.yml` atau hentikan service yang memakai port tersebut.
 
-# Atau ubah port mapping di docker-compose.yml
-```
+### 5. OAuth Google gagal
 
-### Frontend blank putih / error?
+Periksa nilai:
 
-```bash
-# Cek console browser (F12)
-# Pastikan VITE_API_URL di .env benar:
-# VITE_API_URL=http://localhost:3002/api
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REDIRECT_URI`
+- `FRONTEND_URL`
 
-# Rebuild frontend
-docker compose up -d --build frontend
-```
+Lalu cocokkan dengan konfigurasi OAuth app di Google Cloud Console.
 
-### Google OAuth tidak bekerja?
+## Keamanan
 
-1. Pastikan credentials sudah dikonfigurasi di [Google Cloud Console](https://console.cloud.google.com/)
-2. Tambahkan `http://localhost:5174` ke **Authorized JavaScript origins**
-3. Tambahkan `http://localhost:3002/api/auth/google/callback` ke **Authorized redirect URIs**
-4. Update `GOOGLE_CLIENT_ID` dan `GOOGLE_CLIENT_SECRET` di `.env`
+- Jangan commit `.env` ke repository
+- Gunakan `JWT_SECRET` yang kuat di environment production
+- Rotasi secret/API key jika sempat terekspos
+- Batasi akses endpoint manajemen role di level middleware/authz saat hardening production
 
----
+## Catatan Migrasi
 
-## 🤝 Kontribusi
+- Kode lama tersimpan di `legacy_php/`
+- Aplikasi aktif saat ini adalah stack TypeScript (`frontend/` + `backend/`)
+- Riwayat perbaikan modernisasi tambahan dapat dilihat di `IMPROVEMENTS_REPORT.md`
 
-Kontribusi selalu diterima! Berikut cara berkontribusi:
+## Roadmap Singkat
 
-```bash
-# 1. Fork repository ini
+- Penambahan test otomatis backend (unit/integration)
+- Penguatan authorization berbasis role di backend middleware
+- Penambahan OpenAPI/Swagger docs
+- CI pipeline lint/build/test
 
-# 2. Clone fork Anda
-git clone https://github.com/<username-anda>/Cilengkrang-Web-Wisata.git
-cd Cilengkrang-Web-Wisata
+## Kontribusi
 
-# 3. Buat branch baru
-git checkout -b feature/fitur-baru
+1. Fork repository
+2. Buat branch fitur: `feature/nama-fitur`
+3. Commit dengan pesan yang jelas
+4. Buka Pull Request
 
-# 4. Lakukan perubahan & commit
-git add .
-git commit -m "feat: tambah fitur baru"
+Saran format commit:
 
-# 5. Push ke fork Anda
-git push origin feature/fitur-baru
+- `feat:` fitur baru
+- `fix:` perbaikan bug
+- `docs:` perubahan dokumentasi
+- `refactor:` perbaikan struktur kode
+- `chore:` perubahan tooling/dependency
 
-# 6. Buat Pull Request di GitHub
-```
+## Lisensi
 
-### Konvensi Commit
+MIT License. Lihat file `LICENSE`.
 
-```
-feat:     fitur baru
-fix:      perbaikan bug
-docs:     perubahan dokumentasi
-style:    format kode (tanpa perubahan logic)
-refactor: refactoring kode
-test:     menambah/memperbaiki test
-chore:    maintenance (update deps, config, dll)
-```
+## Author
 
----
-
-## 📄 Lisensi
-
-Didistribusikan di bawah **MIT License**. Lihat file `LICENSE` untuk informasi lebih lanjut.
-
----
-
-## 👨‍💻 Pengembang
-
-**Muhammad Rizal Nurfirdaus**
-
-*Proyek ini merupakan modernisasi dari aplikasi PHP legacy ke TypeScript fullstack sebagai bagian dari pembelajaran dan pengembangan web modern.*
-
----
-
-<div align="center">
-
-**⭐ Jika project ini bermanfaat, berikan bintang di GitHub! ⭐**
-
-</div>
+Muhammad Rizal Nurfirdaus

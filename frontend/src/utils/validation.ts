@@ -26,7 +26,7 @@ export const ValidationRules = {
         const hasUpperCase = /[A-Z]/.test(password);
         const hasLowerCase = /[a-z]/.test(password);
         const hasNumbers = /\d/.test(password);
-        const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+        const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
 
         const strength =
             [hasUpperCase, hasLowerCase, hasNumbers, hasSpecialChar].filter(Boolean).length;
@@ -92,8 +92,8 @@ export interface ValidationError {
 
 // Multi-field validation
 export const validateForm = (
-    formData: Record<string, any>,
-    rules: Record<string, Array<[string, (value: any) => boolean]>>
+    formData: Record<string, unknown>,
+    rules: Record<string, Array<[string, (value: unknown) => boolean]>>
 ): ValidationError[] => {
     const errors: ValidationError[] = [];
 

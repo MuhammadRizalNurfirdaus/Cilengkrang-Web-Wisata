@@ -62,7 +62,7 @@ export const jadwalRoutes = new Elysia({ prefix: "/jadwal" })
     .put("/:id/availability", async ({ params, body, set }) => {
         try {
             const id = parseInt(params.id);
-            const count = parseInt(body.count);
+            const count = body.count;
 
             const jadwal = await prisma.jadwalKetersediaanTiket.update({
                 where: { id },

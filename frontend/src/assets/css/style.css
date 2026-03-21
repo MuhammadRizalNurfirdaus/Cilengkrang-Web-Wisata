@@ -398,7 +398,7 @@ body:not(.dark-mode) .navbar-public.navbar-transparent-on-top .btn.btn-warning:h
 /* Hero Section (Alternatif jika tidak pakai video) */
 .hero {
   /* Menggunakan variabel root untuk warna gradient di mode siang */
-  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65)), url('../img/background.jpg') no-repeat center center;
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65)), url('/img/background.jpg') no-repeat center center;
   background-size: cover;
   padding: clamp(80px, 20vh, 200px) 20px;
   color: var(--text-light); /* Menggunakan variabel root */
