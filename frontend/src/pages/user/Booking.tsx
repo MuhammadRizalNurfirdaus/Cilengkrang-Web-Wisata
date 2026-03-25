@@ -7,6 +7,8 @@ import { getImageUrl, fetchApi } from "../../api/client";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Alert from "../../components/ui/Alert";
+import { getDestinationImage } from "../../utils/destinationMedia";
+import { formatTipeHari, getTipeHariBadgeClass } from "../../utils/enum";
 import { getErrorMessage } from "../../utils/error";
 
 interface BookingSuccessResponse {
@@ -86,7 +88,7 @@ export default function Booking() {
         try {
             const payload = {
                 userId: user?.id,
-                tanggalKunjungan: new Date(date).toISOString(),
+                tanggalKunjungan: date,
                 items,
                 catatan: `Booking Wisata: ${wisata?.nama}`
             };
@@ -178,7 +180,9 @@ export default function Booking() {
                                 <div key={tiket.id} className="d-flex justify-content-between align-items-center border-bottom py-3">
                                     <div>
                                         <h6 className="fw-bold mb-1">{tiket.namaLayananDisplay}</h6>
-                                        <span className={`badge ${tiket.tipeHari === "Hari Libur" ? "bg-danger" : tiket.tipeHari === "Hari Kerja" ? "bg-info" : "bg-primary"}`}>{tiket.tipeHari}</span>
+                                        <span className={`badge ${getTipeHariBadgeClass(tiket.tipeHari)}`}>
+                                            {formatTipeHari(tiket.tipeHari)}
+                                        </span>
                                         <div className="text-success fw-bold mt-1">Rp {tiket.harga.toLocaleString("id-ID")}</div>
                                     </div>
                                     <div className="d-flex align-items-center bg-light rounded-pill p-1 border">
@@ -199,7 +203,7 @@ export default function Booking() {
                         </div>
                         <div className="card-body p-4">
                             <div className="d-flex align-items-center mb-4 pb-3 border-bottom">
-                                <img src={getImageUrl(wisata.gambar)} alt={wisata.nama} className="rounded object-fit-cover shadow-sm me-3" width="80" height="80" />
+                                <img src={getImageUrl(getDestinationImage(wisata))} alt={wisata.nama} className="rounded object-fit-cover shadow-sm me-3" width="80" height="80" />
                                 <div><h6 className="fw-bold mb-1">{wisata.nama}</h6><small className="text-muted"><i className="fas fa-calendar-alt me-1"></i> {date ? new Date(date).toLocaleDateString("id-ID") : "-"}</small></div>
                             </div>
                             <div className="mb-3">

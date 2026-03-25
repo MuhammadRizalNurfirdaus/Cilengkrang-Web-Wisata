@@ -3,6 +3,7 @@ import { useFetch } from "../../hooks/useFetch";
 import { Wisata } from "../../types";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
+import { getDestinationImage, getDestinationLocation } from "../../utils/destinationMedia";
 
 export default function AllDestinations() {
     const [page, setPage] = useState(1);
@@ -31,10 +32,10 @@ export default function AllDestinations() {
                             {items.map((wisata) => (
                                 <div key={wisata.id} className="col-md-4">
                                     <Card
-                                        image={wisata.gambar}
+                                        image={getDestinationImage(wisata)}
                                         title={wisata.nama}
                                         description={wisata.deskripsi || "Destinasi wisata alam yang indah"}
-                                        badge={wisata.lokasi || undefined}
+                                        badge={getDestinationLocation(wisata)}
                                         linkTo={`/destinations/${wisata.slug || wisata.id}`}
                                         className="border-0 shadow-sm h-100"
                                     />

@@ -10,7 +10,7 @@ import { getErrorMessage } from "../../../utils/error";
 export default function AdminArticleList() {
     const [page, setPage] = useState(1);
     const [status, setStatus] = useState<{ type: "success" | "danger"; message: string } | null>(null);
-    const { data: articleList, loading, pagination, refetch } = useFetch<Article[]>(`/articles?page=${page}&limit=10`);
+    const { data: articleList, loading, pagination, refetch } = useFetch<Article[]>(`/articles?page=${page}&limit=10&includeUnpublished=true`);
 
     const items = articleList || [];
     const totalPages = pagination?.totalPages || 1;
@@ -49,6 +49,7 @@ export default function AdminArticleList() {
                                 <th className="py-3 px-4 border-0">No</th>
                                 <th className="py-3 px-4 border-0" style={{ width: "100px" }}>Gambar</th>
                                 <th className="py-3 px-4 border-0">Judul Artikel</th>
+                                <th className="py-3 px-4 border-0">Status</th>
                                 <th className="py-3 px-4 border-0">Tanggal</th>
                                 <th className="py-3 px-4 border-0">Aksi</th>
                             </tr>
@@ -56,7 +57,7 @@ export default function AdminArticleList() {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center py-5">
+                                    <td colSpan={6} className="text-center py-5">
                                         <div className="spinner-border text-success" role="status"></div>
                                     </td>
                                 </tr>
@@ -74,6 +75,11 @@ export default function AdminArticleList() {
                                             />
                                         </td>
                                         <td className="px-4 fw-medium text-wrap" style={{ maxWidth: "300px" }}>{article.judul}</td>
+                                        <td className="px-4">
+                                            <span className={`badge ${article.published ? "bg-success" : "bg-secondary"}`}>
+                                                {article.published ? "Published" : "Draft"}
+                                            </span>
+                                        </td>
                                         <td className="px-4 text-muted small">
                                             {new Date(article.createdAt).toLocaleDateString()}
                                         </td>
@@ -91,7 +97,7 @@ export default function AdminArticleList() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={5} className="text-center py-5 text-muted">
+                                    <td colSpan={6} className="text-center py-5 text-muted">
                                         Belum ada artikel.
                                     </td>
                                 </tr>

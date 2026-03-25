@@ -33,6 +33,8 @@ export default function Card({
                         src={getImageUrl(image)}
                         className="card-img-top h-100 w-100 object-fit-cover transition-transform"
                         alt={title}
+                        loading="lazy"
+                        decoding="async"
                     />
                     {badge && (
                         <span className="position-absolute top-0 end-0 m-3 badge bg-success shadow-sm">

@@ -11,6 +11,18 @@ function createSlug(text: string): string {
         .trim();
 }
 
+function parseOptionalBoolean(value: boolean | string | undefined): boolean | undefined {
+    if (value === undefined) {
+        return undefined;
+    }
+
+    if (typeof value === "boolean") {
+        return value;
+    }
+
+    return value === "true";
+}
+
 export const wisataRoutes = new Elysia({ prefix: "/wisata" })
     // Get all wisata with pagination
     .get("/", async ({ query }) => {
@@ -18,11 +30,12 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
             const page = parseInt(query.page || "1");
             const limit = parseInt(query.limit || "10");
             const skip = (page - 1) * limit;
-            const aktif = query.aktif !== "false";
+            const includeInactive = query.includeInactive === "true" || query.aktif === "false";
+            const where = includeInactive ? undefined : { aktif: true };
 
             const [wisata, total] = await Promise.all([
                 prisma.wisata.findMany({
-                    where: aktif ? { aktif: true } : undefined,
+                    where,
                     skip,
                     take: limit,
                     orderBy: { createdAt: "desc" },
@@ -34,7 +47,7 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
                     },
                 }),
                 prisma.wisata.count({
-                    where: aktif ? { aktif: true } : undefined,
+                    where,
                 }),
             ]);
 
@@ -71,8 +84,9 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
         }
     })
     // Get wisata by slug
-    .get("/slug/:slug", async ({ params, set }) => {
+    .get("/slug/:slug", async ({ params, query, set }) => {
         try {
+            const includeInactive = query.includeInactive === "true";
             const wisata = await prisma.wisata.findUnique({
                 where: { slug: params.slug },
                 include: {
@@ -95,7 +109,7 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
                 },
             });
 
-            if (!wisata) {
+            if (!wisata || (!includeInactive && !wisata.aktif)) {
                 set.status = 404;
                 return { success: false, message: "Wisata tidak ditemukan" };
             }
@@ -107,8 +121,9 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
         }
     })
     // Get wisata by ID
-    .get("/:id", async ({ params, set }) => {
+    .get("/:id", async ({ params, query, set }) => {
         try {
+            const includeInactive = query.includeInactive === "true";
             const wisata = await prisma.wisata.findUnique({
                 where: { id: parseInt(params.id) },
                 include: {
@@ -122,7 +137,7 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
                 },
             });
 
-            if (!wisata) {
+            if (!wisata || (!includeInactive && !wisata.aktif)) {
                 set.status = 404;
                 return { success: false, message: "Wisata tidak ditemukan" };
             }
@@ -164,7 +179,7 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
                         jamOperasi: body.jamOperasi,
                         latitude: body.latitude ? parseFloat(body.latitude) : null,
                         longitude: body.longitude ? parseFloat(body.longitude) : null,
-                        aktif: body.aktif !== false,
+                        aktif: parseOptionalBoolean(body.aktif) ?? true,
                     },
                 });
 
@@ -190,7 +205,7 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
                 jamOperasi: t.Optional(t.String()),
                 latitude: t.Optional(t.String()),
                 longitude: t.Optional(t.String()),
-                aktif: t.Optional(t.Boolean()),
+                aktif: t.Optional(t.Union([t.Boolean(), t.String()])),
             }),
         }
     )
@@ -240,7 +255,7 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
                         jamOperasi: body.jamOperasi,
                         latitude: body.latitude ? parseFloat(body.latitude) : undefined,
                         longitude: body.longitude ? parseFloat(body.longitude) : undefined,
-                        aktif: body.aktif,
+                        aktif: parseOptionalBoolean(body.aktif),
                     },
                 });
 
@@ -265,7 +280,7 @@ export const wisataRoutes = new Elysia({ prefix: "/wisata" })
                 jamOperasi: t.Optional(t.String()),
                 latitude: t.Optional(t.String()),
                 longitude: t.Optional(t.String()),
-                aktif: t.Optional(t.Boolean()),
+                aktif: t.Optional(t.Union([t.Boolean(), t.String()])),
             }),
         }
     )

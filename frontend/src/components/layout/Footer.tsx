@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
+import { SITE_MAPS_URL } from "../../utils/destinationMedia";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
     const siteName = "Lembah Cilengkrang";
+    const instagramUrl = "https://www.instagram.com/pesona.lembahcilengkrang/";
+    const fullAddress = "Jl. Pejambon, Pajambon, Kecamatan Kramatmulya, Kabupaten Kuningan, Jawa Barat 45553";
 
     return (
         <footer className="bg-dark text-light pt-5 pb-3 mt-auto">
@@ -15,7 +18,7 @@ export default function Footer() {
                             Destinasi wisata terbaik untuk keluarga dan teman.
                         </p>
                         <div className="d-flex gap-3">
-                            <a href="https://www.instagram.com/crawasy_zall" target="_blank" rel="noopener noreferrer" className="text-white-50"><i className="fab fa-instagram fa-lg"></i></a>
+                            <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="text-white-50"><i className="fab fa-instagram fa-lg"></i></a>
                             <a href="https://wa.me/6283101461069" target="_blank" rel="noopener noreferrer" className="text-white-50"><i className="fab fa-whatsapp fa-lg"></i></a>
                             <a href="mailto:muhammadrizalnurfirdaus@gmail.com" className="text-white-50"><i className="fas fa-envelope fa-lg"></i></a>
                         </div>
@@ -37,13 +40,13 @@ export default function Footer() {
                         <ul className="list-unstyled small text-white-50">
                             <li className="mb-2">
                                 <i className="fas fa-map-marker-alt me-2"></i>
-                                <a href="https://maps.app.goo.gl/GucUR2sUx7HT5Prt9" target="_blank" rel="noopener noreferrer" className="text-white-50 text-decoration-none">
-                                    Desa Pajambon, Kec. Kramatmulya, Kab. Kuningan, Jawa Barat 45553
+                                <a href={SITE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="text-white-50 text-decoration-none">
+                                    {fullAddress}
                                 </a>
                             </li>
                             <li className="mb-2"><i className="fas fa-phone me-2"></i> <a href="tel:+6283101461069" className="text-white-50 text-decoration-none">083-1014-61069</a></li>
                             <li className="mb-2"><i className="fas fa-envelope me-2"></i> <a href="mailto:muhammadrizalnurfirdaus@gmail.com" className="text-white-50 text-decoration-none">muhammadrizalnurfirdaus@gmail.com</a></li>
-                            <li className="mb-2"><i className="fab fa-instagram me-2"></i> <a href="https://www.instagram.com/crawasy_zall" target="_blank" rel="noopener noreferrer" className="text-white-50 text-decoration-none">@crawasy_zall</a></li>
+                            <li className="mb-2"><i className="fab fa-instagram me-2"></i> <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="text-white-50 text-decoration-none">@pesona.lembahcilengkrang</a></li>
                         </ul>
                     </div>
                 </div>

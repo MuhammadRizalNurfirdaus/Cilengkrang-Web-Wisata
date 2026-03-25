@@ -1,8 +1,7 @@
 import { Elysia, t } from "elysia";
 import prisma from "../db";
 import { hashPassword } from "../utils/password";
-import { join } from "path";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { saveFile } from "../utils/file";
 
 export const usersRoutes = new Elysia({ prefix: "/users" })
     // Get all users (admin only)
@@ -237,20 +236,7 @@ export const usersRoutes = new Elysia({ prefix: "/users" })
                 return { success: false, message: "Format file harus jpg, png, webp, atau gif" };
             }
 
-            // Save file
-            const uploadDir = join(process.cwd(), "uploads", "profil");
-            if (!existsSync(uploadDir)) {
-                mkdirSync(uploadDir, { recursive: true });
-            }
-
-            const ext = foto.type.split("/")[1] === "jpeg" ? "jpg" : foto.type.split("/")[1];
-            const filename = `profil_${userId}_${Date.now()}.${ext}`;
-            const filepath = join(uploadDir, filename);
-
-            const buffer = Buffer.from(await foto.arrayBuffer());
-            writeFileSync(filepath, buffer);
-
-            const fotoPath = `/uploads/profil/${filename}`;
+            const fotoPath = await saveFile(foto as File, "profil");
 
             const user = await prisma.user.update({
                 where: { id: userId },

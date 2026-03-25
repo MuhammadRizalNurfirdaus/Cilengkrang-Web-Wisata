@@ -103,7 +103,7 @@ export default function Register() {
             if (response.success && response.data) {
                 // Auto login after register
                 login(response.data.token, response.data.user);
-                navigate("/");
+                navigate("/user/dashboard");
             } else {
                 setError(response.message || "Registrasi gagal");
             }

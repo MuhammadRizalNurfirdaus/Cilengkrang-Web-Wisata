@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useFetch } from "../../hooks/useFetch";
 import { Wisata } from "../../types";
 import Card from "../ui/Card";
+import { getDestinationImage, getDestinationLocation } from "../../utils/destinationMedia";
 
 export default function Destinations() {
     const { data: wisataList, loading } = useFetch<Wisata[]>("/wisata/popular?limit=3");
@@ -30,11 +31,11 @@ export default function Destinations() {
                         {wisataList.map((wisata) => (
                             <div key={wisata.id} className="col-md-4">
                                 <Card
-                                    image={wisata.gambar}
+                                    image={getDestinationImage(wisata)}
                                     title={wisata.nama}
                                     description={wisata.deskripsi || "Destinasi wisata alam yang indah"}
                                     linkTo={`/destinations/${wisata.slug || wisata.id}`}
-                                    badge={wisata.lokasi || undefined}
+                                    badge={getDestinationLocation(wisata)}
                                     className="border-0 shadow-sm h-100"
                                 />
                             </div>

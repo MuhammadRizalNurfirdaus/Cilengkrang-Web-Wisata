@@ -85,7 +85,7 @@ export default function Login() {
                 setError(response.message || "Login gagal");
             }
         } catch (err: unknown) {
-            setError(getErrorMessage(err, "Terjasi kesalahan saat login"));
+            setError(getErrorMessage(err, "Terjadi kesalahan saat login"));
         } finally {
             setLoading(false);
         }

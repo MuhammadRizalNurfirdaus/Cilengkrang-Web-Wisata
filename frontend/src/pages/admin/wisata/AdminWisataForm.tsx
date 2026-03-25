@@ -17,6 +17,11 @@ export default function AdminWisataForm() {
         nama: "",
         deskripsi: "",
         lokasi: "",
+        fasilitas: "",
+        jamOperasi: "",
+        latitude: "",
+        longitude: "",
+        aktif: true,
     });
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -25,7 +30,7 @@ export default function AdminWisataForm() {
 
     // Fetch data if editing
     const { data: existingData } = useFetch<Wisata>(
-        isEdit ? `/wisata/${id}` : null
+        isEdit ? `/wisata/${id}?includeInactive=true` : null
     );
 
     useEffect(() => {
@@ -34,6 +39,11 @@ export default function AdminWisataForm() {
                 nama: existingData.nama,
                 deskripsi: existingData.deskripsi || "",
                 lokasi: existingData.lokasi || "",
+                fasilitas: existingData.fasilitas || "",
+                jamOperasi: existingData.jamOperasi || "",
+                latitude: existingData.latitude?.toString() || "",
+                longitude: existingData.longitude?.toString() || "",
+                aktif: existingData.aktif,
             });
             if (existingData.gambar) {
                 setImagePreview(getImageUrl(existingData.gambar));
@@ -60,6 +70,11 @@ export default function AdminWisataForm() {
             data.append("nama", formData.nama);
             data.append("deskripsi", formData.deskripsi);
             data.append("lokasi", formData.lokasi);
+            data.append("fasilitas", formData.fasilitas);
+            data.append("jamOperasi", formData.jamOperasi);
+            data.append("latitude", formData.latitude);
+            data.append("longitude", formData.longitude);
+            data.append("aktif", String(formData.aktif));
             if (imageFile) {
                 data.append("gambar", imageFile);
             }
@@ -121,6 +136,60 @@ export default function AdminWisataForm() {
                                     value={formData.lokasi}
                                     onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
                                 />
+
+                                <Input
+                                    label="Jam Operasi"
+                                    id="jamOperasi"
+                                    value={formData.jamOperasi}
+                                    onChange={(e) => setFormData({ ...formData, jamOperasi: e.target.value })}
+                                    placeholder="Contoh: 08:00 - 17:00"
+                                />
+
+                                <div className="mb-3">
+                                    <label htmlFor="fasilitas" className="form-label small fw-medium text-muted uppercase tracking-wide">Fasilitas</label>
+                                    <textarea
+                                        id="fasilitas"
+                                        className="form-control"
+                                        rows={3}
+                                        value={formData.fasilitas}
+                                        onChange={(e) => setFormData({ ...formData, fasilitas: e.target.value })}
+                                        placeholder="Pisahkan dengan koma, misalnya: Toilet, Mushola, Parkir"
+                                    ></textarea>
+                                </div>
+
+                                <div className="row g-3">
+                                    <div className="col-md-6">
+                                        <Input
+                                            label="Latitude"
+                                            id="latitude"
+                                            value={formData.latitude}
+                                            onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                                            placeholder="-6.123456"
+                                        />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <Input
+                                            label="Longitude"
+                                            id="longitude"
+                                            value={formData.longitude}
+                                            onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                                            placeholder="106.123456"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-check form-switch mt-3">
+                                    <input
+                                        id="aktif"
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        checked={formData.aktif}
+                                        onChange={(e) => setFormData({ ...formData, aktif: e.target.checked })}
+                                    />
+                                    <label htmlFor="aktif" className="form-check-label">
+                                        Tampilkan destinasi di halaman publik
+                                    </label>
+                                </div>
                             </div>
 
                             <div className="col-md-4">

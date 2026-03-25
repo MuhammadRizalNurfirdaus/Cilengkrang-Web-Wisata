@@ -2,10 +2,31 @@ import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import prisma from "../db";
 import { hashPassword, verifyPassword } from "../utils/password";
+import { RequestError } from "../utils/request";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
 const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || "http://localhost:5174/auth/google/callback";
+const GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
+const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
+
+interface GoogleTokenResponse {
+    access_token?: string;
+    error?: string;
+    error_description?: string;
+}
+
+interface GoogleUserProfile {
+    email?: string;
+    name?: string;
+    picture?: string;
+}
+
+function assertGoogleOAuthConfigured() {
+    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+        throw new RequestError("Google OAuth belum dikonfigurasi di server", 503);
+    }
+}
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
     .use(
@@ -15,31 +36,47 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         })
     )
     // --- Google OAuth Endpoints ---
-    .get("/google/url", () => {
-        const params = new URLSearchParams({
-            client_id: GOOGLE_CLIENT_ID,
-            redirect_uri: GOOGLE_REDIRECT_URI,
-            response_type: "code",
-            scope: "openid email profile",
-            access_type: "offline",
-            prompt: "consent",
-        });
-        return {
-            success: true,
-            data: { url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}` },
-        };
+    .get("/google/url", ({ set }) => {
+        try {
+            assertGoogleOAuthConfigured();
+
+            const params = new URLSearchParams({
+                client_id: GOOGLE_CLIENT_ID,
+                redirect_uri: GOOGLE_REDIRECT_URI,
+                response_type: "code",
+                scope: "openid email profile",
+                access_type: "offline",
+                prompt: "consent",
+            });
+
+            return {
+                success: true,
+                data: { url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}` },
+            };
+        } catch (error) {
+            if (error instanceof RequestError) {
+                set.status = error.status;
+                return { success: false, message: error.message };
+            }
+
+            console.error("Google OAuth config error:", error);
+            set.status = 500;
+            return { success: false, message: "Terjadi kesalahan server" };
+        }
     })
     .post(
         "/google/callback",
         async ({ body, jwt, set }) => {
             try {
+                assertGoogleOAuthConfigured();
                 const { code } = body;
 
-                // Exchange code for tokens
-                const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+                const tokenResponse = await fetch(GOOGLE_TOKEN_URL, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: new URLSearchParams({
                         code,
                         client_id: GOOGLE_CLIENT_ID,
                         client_secret: GOOGLE_CLIENT_SECRET,
@@ -48,28 +85,33 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
                     }),
                 });
 
-                const tokenData = await tokenResponse.json() as any;
+                const tokenData = await tokenResponse.json() as GoogleTokenResponse;
 
-                if (tokenData.error) {
+                if (!tokenResponse.ok || tokenData.error || !tokenData.access_token) {
                     set.status = 400;
-                    return { success: false, message: `Google OAuth error: ${tokenData.error_description || tokenData.error}` };
+                    return {
+                        success: false,
+                        message: `Google OAuth error: ${tokenData.error_description || tokenData.error || "Token Google tidak valid"}`,
+                    };
                 }
 
-                // Get user info from Google
-                const userInfoResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+                const userInfoResponse = await fetch(GOOGLE_USER_INFO_URL, {
                     headers: { Authorization: `Bearer ${tokenData.access_token}` },
                 });
 
-                const googleUser = await userInfoResponse.json() as any;
+                const googleUser = await userInfoResponse.json() as GoogleUserProfile;
 
-                if (!googleUser.email) {
+                if (!userInfoResponse.ok || !googleUser.email) {
                     set.status = 400;
                     return { success: false, message: "Tidak bisa mendapatkan email dari Google" };
                 }
 
+                const googleEmail = googleUser.email;
+                const fallbackName = googleEmail.split("@")[0] || googleEmail;
+
                 // Find or create user
                 let user = await prisma.user.findUnique({
-                    where: { email: googleUser.email },
+                    where: { email: googleEmail },
                 });
 
                 if (!user) {
@@ -77,8 +119,8 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
                     const randomPassword = await hashPassword(crypto.randomUUID());
                     user = await prisma.user.create({
                         data: {
-                            nama: googleUser.name || googleUser.email.split("@")[0],
-                            email: googleUser.email,
+                            nama: googleUser.name || fallbackName,
+                            email: googleEmail,
                             password: randomPassword,
                             fotoProfil: googleUser.picture || null,
                             role: "user",
@@ -110,6 +152,11 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
                     },
                 };
             } catch (error) {
+                if (error instanceof RequestError) {
+                    set.status = error.status;
+                    return { success: false, message: error.message };
+                }
+
                 console.error("Google OAuth error:", error);
                 set.status = 500;
                 return { success: false, message: "Terjadi kesalahan saat login dengan Google" };
@@ -124,7 +171,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
     // --- Standard Auth Endpoints ---
     .post(
         "/register",
-        async ({ body, set }) => {
+        async ({ body, jwt, set }) => {
             try {
                 const { nama, email, password, noHp, alamat } = body;
 
@@ -151,19 +198,30 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
                         alamat,
                         role: "user",
                     },
-                    select: {
-                        id: true,
-                        nama: true,
-                        email: true,
-                        role: true,
-                        createdAt: true,
-                    },
+                });
+
+                const token = await jwt.sign({
+                    userId: user.id,
+                    email: user.email,
+                    role: user.role,
                 });
 
                 return {
                     success: true,
                     message: "Registrasi berhasil",
-                    data: user,
+                    data: {
+                        token,
+                        user: {
+                            id: user.id,
+                            nama: user.nama,
+                            email: user.email,
+                            role: user.role,
+                            noHp: user.noHp,
+                            alamat: user.alamat,
+                            fotoProfil: user.fotoProfil,
+                            createdAt: user.createdAt,
+                        },
+                    },
                 };
             } catch (error) {
                 console.error("Register error:", error);
@@ -250,7 +308,14 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             }
 
             const token = authHeader.substring(7);
-            const payload = await jwt.verify(token);
+            let payload: Awaited<ReturnType<typeof jwt.verify>>;
+
+            try {
+                payload = await jwt.verify(token);
+            } catch {
+                set.status = 401;
+                return { success: false, message: "Token tidak valid" };
+            }
 
             if (!payload) {
                 set.status = 401;

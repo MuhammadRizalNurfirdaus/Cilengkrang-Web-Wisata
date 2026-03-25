@@ -15,7 +15,10 @@ export default function AdminArticleForm() {
 
     const [formData, setFormData] = useState({
         judul: "",
+        ringkasan: "",
+        penulis: "",
         isi: "",
+        published: true,
     });
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -23,14 +26,17 @@ export default function AdminArticleForm() {
     const [error, setError] = useState<string | null>(null);
 
     const { data: existingData } = useFetch<Article>(
-        isEdit ? `/articles/${id}` : null
+        isEdit ? `/articles/${id}?includeUnpublished=true` : null
     );
 
     useEffect(() => {
         if (existingData) {
             setFormData({
                 judul: existingData.judul,
+                ringkasan: existingData.ringkasan || "",
+                penulis: existingData.penulis || "",
                 isi: existingData.isi,
+                published: existingData.published,
             });
             if (existingData.gambar) {
                 setImagePreview(getImageUrl(existingData.gambar));
@@ -55,7 +61,10 @@ export default function AdminArticleForm() {
         try {
             const data = new FormData();
             data.append("judul", formData.judul);
+            data.append("ringkasan", formData.ringkasan);
+            data.append("penulis", formData.penulis);
             data.append("isi", formData.isi);
+            data.append("published", String(formData.published));
             if (imageFile) {
                 data.append("gambar", imageFile);
             }
@@ -100,6 +109,26 @@ export default function AdminArticleForm() {
                                     required
                                 />
 
+                                <Input
+                                    label="Penulis"
+                                    id="penulis"
+                                    value={formData.penulis}
+                                    onChange={(e) => setFormData({ ...formData, penulis: e.target.value })}
+                                    placeholder="Nama penulis"
+                                />
+
+                                <div className="mb-3">
+                                    <label htmlFor="ringkasan" className="form-label small fw-medium text-muted uppercase tracking-wide">Ringkasan</label>
+                                    <textarea
+                                        id="ringkasan"
+                                        className="form-control"
+                                        rows={3}
+                                        value={formData.ringkasan}
+                                        onChange={(e) => setFormData({ ...formData, ringkasan: e.target.value })}
+                                        placeholder="Ringkasan singkat untuk daftar artikel"
+                                    ></textarea>
+                                </div>
+
                                 <div className="mb-3">
                                     <label htmlFor="isi" className="form-label small fw-medium text-muted uppercase tracking-wide">Isi Konten</label>
                                     <textarea
@@ -111,6 +140,19 @@ export default function AdminArticleForm() {
                                         required
                                     ></textarea>
                                     <div className="form-text">Gunakan format markdown sederhana atau text biasa.</div>
+                                </div>
+
+                                <div className="form-check form-switch mt-4">
+                                    <input
+                                        id="published"
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        checked={formData.published}
+                                        onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                                    />
+                                    <label htmlFor="published" className="form-check-label">
+                                        Publikasikan artikel
+                                    </label>
                                 </div>
                             </div>
 

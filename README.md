@@ -13,6 +13,25 @@ Project ini merupakan modernisasi dari sistem PHP legacy ke stack TypeScript mod
 
 Repository ini juga menyimpan kode lama di folder `legacy_php/` sebagai referensi historis migrasi.
 
+## Perubahan Terbaru
+
+Update terbaru yang sudah diterapkan pada codebase ini:
+
+- Stabilitas backend ditingkatkan pada alur autentikasi, validasi pemesanan tiket, validasi jadwal, dan upload foto profil.
+- Integrasi Google OAuth diperbaiki agar token exchange lebih aman dan error handling lebih jelas saat kredensial belum dikonfigurasi.
+- Data lokasi resmi Lembah Cilengkrang sudah diselaraskan ke alamat:
+  `Jl. Pejambon, Pajambon, Kecamatan Kramatmulya, Kabupaten Kuningan, Jawa Barat 45553`
+- Tombol peta publik sekarang mengarah ke lokasi resmi:
+  `https://maps.app.goo.gl/wUUnezoheZNLnSzEA`
+- Halaman detail destinasi kini lebih rapi, parser fasilitas lebih aman, dan tombol `Lihat di Maps` konsisten di detail, kontak, dan footer.
+- Halaman kontak didesain ulang agar lebih presisi, konsisten di light/dark mode, dan lebih nyaman dipakai di desktop maupun mobile.
+- Fallback gambar destinasi dan galeri kini memakai aset lokal beresolusi lebih tinggi agar tampilan visual lebih tajam dan profesional.
+- Validasi terbaru yang sudah dijalankan:
+  - `frontend: npm run lint`
+  - `frontend: npm run build`
+  - `backend: bunx tsc -p tsconfig.json --noEmit`
+  - `backend: bunx prisma validate`
+
 ## Fitur Utama
 
 - Landing page destinasi wisata
@@ -114,6 +133,28 @@ Service default dari `docker-compose.yml`:
 └── legacy_php/
 ```
 
+## Cara Clone dan Setup Awal
+
+### 1. Clone repository
+
+```bash
+git clone https://github.com/MuhammadRizalNurfirdaus/Cilengkrang-Web-Wisata.git
+cd Cilengkrang-Web-Wisata
+```
+
+### 2. Salin file environment
+
+```bash
+cp .env.example .env
+```
+
+Sesuaikan nilai `.env` jika Anda menjalankan database, backend, atau frontend di host/port yang berbeda.
+
+### 3. Pilih metode menjalankan project
+
+- Gunakan Docker jika ingin setup paling cepat dan konsisten.
+- Gunakan mode lokal jika ingin mengembangkan frontend/backend secara terpisah.
+
 ## Environment Variables
 
 Salin `.env.example` menjadi `.env` di root project.
@@ -152,7 +193,7 @@ Contoh default ada di `.env.example`.
 
 ## Cara Menjalankan
 
-## 1. Menjalankan dengan Docker (direkomendasikan)
+### 1. Menjalankan dengan Docker (direkomendasikan)
 
 ### Prasyarat
 
@@ -162,7 +203,7 @@ Contoh default ada di `.env.example`.
 ### Langkah
 
 ```bash
-# dari root repository
+# dari root repository setelah clone
 docker compose up -d --build
 ```
 
@@ -197,7 +238,7 @@ Catatan:
 - Pada Prisma 7, URL datasource dikelola via `backend/prisma.config.ts`.
 - Koneksi runtime Prisma menggunakan adapter MariaDB di `backend/src/db.ts`.
 
-## 2. Menjalankan secara Lokal (tanpa Docker)
+### 2. Menjalankan secara Lokal (tanpa Docker)
 
 ### Prasyarat
 
@@ -228,6 +269,17 @@ npm run dev
 ```
 
 Frontend default berjalan di `http://localhost:5173`.
+
+### Alternatif dari root project
+
+Jika dependency root sudah terpasang, Anda juga bisa memakai script berikut:
+
+```bash
+npm install
+npm run dev:all
+```
+
+Script ini menjalankan backend dan frontend secara paralel.
 
 ## NPM Scripts
 
@@ -490,6 +542,19 @@ Periksa nilai:
 - `FRONTEND_URL`
 
 Lalu cocokkan dengan konfigurasi OAuth app di Google Cloud Console.
+
+### 6. Link peta atau data lokasi belum berubah
+
+- Pastikan frontend terbaru sudah dibuild ulang
+- Jika memakai data lama dari database, jalankan ulang seed bila diperlukan:
+
+```bash
+cd backend
+bun run prisma/seed.ts
+```
+
+- Link peta resmi yang dipakai frontend saat ini adalah:
+  `https://maps.app.goo.gl/wUUnezoheZNLnSzEA`
 
 ## Keamanan
 

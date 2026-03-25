@@ -10,7 +10,7 @@ import { getErrorMessage } from "../../../utils/error";
 export default function AdminWisataList() {
     const [page, setPage] = useState(1);
     const [status, setStatus] = useState<{ type: "success" | "danger"; message: string } | null>(null);
-    const { data: wisataList, loading, pagination, refetch } = useFetch<Wisata[]>(`/wisata?page=${page}&limit=10`);
+    const { data: wisataList, loading, pagination, refetch } = useFetch<Wisata[]>(`/wisata?page=${page}&limit=10&includeInactive=true`);
 
     const items = wisataList || [];
     const totalPages = pagination?.totalPages || 1;
@@ -49,13 +49,14 @@ export default function AdminWisataList() {
                                 <th className="py-3 px-4 border-0">No</th>
                                 <th className="py-3 px-4 border-0">Gambar</th>
                                 <th className="py-3 px-4 border-0">Nama Destinasi</th>
+                                <th className="py-3 px-4 border-0">Status</th>
                                 <th className="py-3 px-4 border-0">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={4} className="text-center py-5">
+                                    <td colSpan={5} className="text-center py-5">
                                         <div className="spinner-border text-success" role="status"></div>
                                     </td>
                                 </tr>
@@ -74,6 +75,11 @@ export default function AdminWisataList() {
                                         </td>
                                         <td className="px-4 fw-medium">{wisata.nama}</td>
                                         <td className="px-4">
+                                            <span className={`badge ${wisata.aktif ? "bg-success" : "bg-secondary"}`}>
+                                                {wisata.aktif ? "Aktif" : "Nonaktif"}
+                                            </span>
+                                        </td>
+                                        <td className="px-4">
                                             <div className="d-flex gap-2">
                                                 <Link to={`/admin/wisata/edit/${wisata.id}`} className="btn btn-outline-info btn-sm rounded-circle" title="Edit">
                                                     <i className="fas fa-edit"></i>
@@ -87,7 +93,7 @@ export default function AdminWisataList() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={4} className="text-center py-5 text-muted">
+                                    <td colSpan={5} className="text-center py-5 text-muted">
                                         Belum ada data wisata.
                                     </td>
                                 </tr>

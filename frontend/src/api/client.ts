@@ -1,6 +1,18 @@
 import { ApiResponse } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
+const API_BASE = (import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, "") || "http://localhost:3002").replace(/\/$/, "");
+
+function normalizeAssetPath(path: string): string {
+    const trimmedPath = path.trim();
+    const withoutLeadingSlash = trimmedPath.replace(/^\/+/, "");
+
+    if (withoutLeadingSlash.startsWith("uploads/")) {
+        return withoutLeadingSlash;
+    }
+
+    return `uploads/${withoutLeadingSlash}`;
+}
 
 export async function fetchApi<T>(
     endpoint: string,
@@ -48,10 +60,16 @@ export async function fetchApi<T>(
     return data as T;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || "http://localhost:3002";
-
 export const getImageUrl = (path?: string | null) => {
     if (!path) return "https://placehold.co/600x400?text=No+Image";
     if (path.startsWith("http")) return path;
-    return `${API_BASE}/${path}`;
+
+    const trimmedPath = path.trim();
+    const withoutLeadingSlash = trimmedPath.replace(/^\/+/, "");
+
+    if (withoutLeadingSlash.startsWith("img/")) {
+        return `/${withoutLeadingSlash}`;
+    }
+
+    return `${API_BASE}/${normalizeAssetPath(path)}`;
 };

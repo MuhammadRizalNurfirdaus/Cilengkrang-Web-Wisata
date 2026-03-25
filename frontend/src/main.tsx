@@ -11,8 +11,13 @@ const root = document.getElementById("root");
 if (root) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
-      <ErrorBoundary>
-        <BrowserRouter>
+        <ErrorBoundary>
+        <BrowserRouter
+          future={{
+            v7_relativeSplatPath: true,
+            v7_startTransition: true,
+          }}
+        >
           <ThemeProvider>
             <AuthProvider>
               <App />

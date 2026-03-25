@@ -67,7 +67,7 @@ export interface Wisata {
 export interface JenisTiket {
     id: number;
     namaLayananDisplay: string;
-    tipeHari: "Hari Kerja" | "Hari Libur" | "Semua Hari";
+    tipeHari: "HARI_KERJA" | "HARI_LIBUR" | "SEMUA_HARI";
     harga: number;
     deskripsi?: string | null;
     aktif: boolean;
@@ -156,8 +156,8 @@ export interface SewaAlat {
     deskripsi?: string | null;
     hargaSewa: number;
     durasiHargaSewa: number;
-    satuanDurasiHarga: "Jam" | "Hari" | "Peminjaman";
+    satuanDurasiHarga: "JAM" | "HARI" | "PEMINJAMAN";
     stokTersedia: number;
     gambarAlat?: string | null;
-    kondisiAlat: "Baik" | "Rusak Ringan" | "Perlu Perbaikan" | "Hilang";
+    kondisiAlat: "BAIK" | "RUSAK_RINGAN" | "PERLU_PERBAIKAN" | "HILANG";
 }

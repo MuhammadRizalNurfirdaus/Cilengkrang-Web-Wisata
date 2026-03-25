@@ -80,10 +80,11 @@ async function main() {
       slug: "curug-cilengkrang",
       deskripsi:
         "Curug Cilengkrang adalah air terjun yang memiliki ketinggian sekitar 30 meter dengan air yang jernih dan menyegarkan. Dikelilingi oleh hutan pinus yang asri, tempat ini sangat cocok untuk rekreasi keluarga dan fotografi alam. Suara gemericik air yang jatuh menciptakan suasana yang menenangkan dan menyejukkan jiwa.",
-      gambar: null,
-      lokasi: "Desa Pajambon, Kec. Kramatmulya, Kuningan",
-      latitude: -6.9833,
-      longitude: 108.4833,
+      gambar: "/img/curug_cilengkrang.jpg",
+      lokasi:
+        "Jl. Pejambon, Pajambon, Kecamatan Kramatmulya, Kabupaten Kuningan, Jawa Barat 45553",
+      latitude: -6.940095599999999,
+      longitude: 108.4495368,
       fasilitas: JSON.stringify([
         "Area Parkir Luas",
         "Toilet Umum",
@@ -100,7 +101,7 @@ async function main() {
       slug: "pemandian-air-panas-alami",
       deskripsi:
         "Nikmati sensasi berendam di kolam air panas alami yang langsung bersumber dari perut bumi. Air panas ini dipercaya memiliki kandungan mineral yang bermanfaat untuk kesehatan kulit dan meredakan pegal-pegal. Tersedia beberapa kolam dengan suhu berbeda yang dapat disesuaikan dengan preferensi pengunjung.",
-      gambar: null,
+      gambar: "/img/pemandian_air_panas_utama.jpg",
       lokasi: "Area Pemandian Cilengkrang",
       latitude: -6.9845,
       longitude: 108.4840,
@@ -120,7 +121,7 @@ async function main() {
       slug: "camping-ground-pinus",
       deskripsi:
         "Rasakan pengalaman berkemah yang tak terlupakan di tengah hutan pinus yang sejuk. Area camping ini dilengkapi dengan fasilitas dasar seperti toilet dan sumber air bersih. Pada malam hari, Anda dapat menikmati indahnya langit malam yang bertabur bintang jauh dari polusi cahaya kota.",
-      gambar: null,
+      gambar: "/img/kemah.jpg",
       lokasi: "Hutan Pinus Cilengkrang",
       latitude: -6.9820,
       longitude: 108.4820,
@@ -139,7 +140,7 @@ async function main() {
       slug: "trekking-trail",
       deskripsi:
         "Jalur trekking sepanjang 3km yang akan membawa Anda menjelajahi keindahan hutan Cilengkrang. Sepanjang perjalanan, Anda akan menemukan berbagai jenis flora dan fauna endemik, serta pemandangan alam yang memukau. Cocok untuk pecinta hiking dan petualangan alam.",
-      gambar: null,
+      gambar: "/img/lembah_cilengkrang.jpg",
       lokasi: "Jalur Trekking Cilengkrang",
       latitude: -6.9810,
       longitude: 108.4810,
@@ -185,6 +186,53 @@ async function main() {
   }
 
   console.log("✅ Created jenis tiket for all wisata");
+
+  await prisma.galeri.createMany({
+    data: [
+      {
+        namaFile: "/img/lembah_cilengkrang.jpg",
+        judul: "Lembah Cilengkrang",
+        keterangan:
+          "Suasana hijau dan aliran sungai di kawasan Lembah Cilengkrang.",
+        kategori: "destinasi",
+        wisataId: wisata[0]?.id,
+      },
+      {
+        namaFile: "/img/curug_cilengkrang.jpg",
+        judul: "Curug Cilengkrang",
+        keterangan:
+          "Air terjun Curug Cilengkrang dengan nuansa hutan yang rindang.",
+        kategori: "destinasi",
+        wisataId: wisata[0]?.id,
+      },
+      {
+        namaFile: "/img/pemandian_air_panas_utama.jpg",
+        judul: "Pemandian Air Panas",
+        keterangan:
+          "Area pemandian air panas alami yang menjadi daya tarik utama pengunjung.",
+        kategori: "destinasi",
+        wisataId: wisata[1]?.id,
+      },
+      {
+        namaFile: "/img/kemah.jpg",
+        judul: "Camping Ground Pinus",
+        keterangan:
+          "Suasana area camping di tengah pepohonan yang teduh.",
+        kategori: "aktivitas",
+        wisataId: wisata[2]?.id,
+      },
+      {
+        namaFile: "/img/gazebo.jpg",
+        judul: "Area Gazebo",
+        keterangan:
+          "Spot bersantai di area gazebo dekat aliran sungai.",
+        kategori: "fasilitas",
+        wisataId: wisata[0]?.id,
+      },
+    ],
+  });
+
+  console.log("✅ Created galeri destinations");
 
   // Create articles
   const articles = await Promise.all([
@@ -346,7 +394,8 @@ async function main() {
       },
       {
         key: "alamat",
-        value: "Desa Pajambon, Kec. Kramatmulya, Kab. Kuningan, Jawa Barat 45553",
+        value:
+          "Jl. Pejambon, Pajambon, Kecamatan Kramatmulya, Kabupaten Kuningan, Jawa Barat 45553",
         deskripsi: "Alamat lengkap",
       },
       {

@@ -3,6 +3,8 @@ import { useFetch } from "../../hooks/useFetch";
 import { useAuth } from "../../context/AuthContext";
 import { Wisata } from "../../types";
 import { getImageUrl } from "../../api/client";
+import { getDestinationImage, getDestinationLocation, SITE_MAPS_URL } from "../../utils/destinationMedia";
+import { formatTipeHari, getTipeHariBadgeClass } from "../../utils/enum";
 
 export default function DestinationDetail() {
     const { id } = useParams<{ id: string }>();
@@ -36,18 +38,31 @@ export default function DestinationDetail() {
     }
 
     // Parse fasilitas if it's a JSON string or comma-separated
-    const fasilitasList = wisata.fasilitas
-        ? wisata.fasilitas.split(",").map(f => f.trim()).filter(Boolean)
-        : [];
+    let fasilitasList: string[] = [];
+
+    if (wisata.fasilitas) {
+        try {
+            const parsedFacilities = JSON.parse(wisata.fasilitas) as unknown;
+            if (Array.isArray(parsedFacilities)) {
+                fasilitasList = parsedFacilities
+                    .filter((item): item is string => typeof item === "string")
+                    .map((item) => item.trim())
+                    .filter(Boolean);
+            }
+        } catch {
+            fasilitasList = wisata.fasilitas.split(",").map((f) => f.trim()).filter(Boolean);
+        }
+    }
 
     return (
         <div className="bg-white min-vh-100 pt-5 mt-4">
             {/* Hero Image */}
-            <div className="position-relative" style={{ height: "450px" }}>
+            <div className="position-relative destination-hero-image">
                 <img
-                    src={getImageUrl(wisata.gambar)}
+                    src={getImageUrl(getDestinationImage(wisata))}
                     alt={wisata.nama}
                     className="w-100 h-100 object-fit-cover"
+                    decoding="async"
                 />
                 <div className="position-absolute bottom-0 start-0 w-100 p-5 text-white"
                     style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)" }}>
@@ -55,7 +70,7 @@ export default function DestinationDetail() {
                         <h1 className="display-4 fw-bold">{wisata.nama}</h1>
                         <p className="lead mb-0">
                             <i className="fas fa-map-marker-alt me-2 text-warning"></i> 
-                            {wisata.lokasi || "Lokasi belum tersedia"}
+                            {getDestinationLocation(wisata) || "Lokasi belum tersedia"}
                         </p>
                         {wisata.jamOperasi && (
                             <p className="mb-0 mt-2">
@@ -124,11 +139,8 @@ export default function DestinationDetail() {
                                                                 )}
                                                             </td>
                                                             <td className="py-3">
-                                                                <span className={`badge ${
-                                                                    tiket.tipeHari === "Hari Libur" ? "bg-danger" : 
-                                                                    tiket.tipeHari === "Hari Kerja" ? "bg-info" : "bg-primary"
-                                                                }`}>
-                                                                    {tiket.tipeHari}
+                                                                <span className={`badge ${getTipeHariBadgeClass(tiket.tipeHari)}`}>
+                                                                    {formatTipeHari(tiket.tipeHari)}
                                                                 </span>
                                                             </td>
                                                             <td className="py-3 text-end fw-bold text-success fs-5">
@@ -158,11 +170,13 @@ export default function DestinationDetail() {
                                 <div className="row g-3">
                                     {wisata.galeri.slice(0, 6).map((foto) => (
                                         <div key={foto.id} className="col-6 col-md-4">
-                                            <div className="ratio ratio-1x1 rounded-3 overflow-hidden shadow-sm">
+                                            <div className="ratio ratio-1x1 destination-gallery-card">
                                                 <img
                                                     src={getImageUrl(foto.namaFile)}
                                                     alt={foto.keterangan || wisata.nama}
-                                                    className="object-fit-cover w-100 h-100"
+                                                    className="destination-gallery-image"
+                                                    loading="lazy"
+                                                    decoding="async"
                                                 />
                                             </div>
                                         </div>
@@ -192,17 +206,14 @@ export default function DestinationDetail() {
                                     <i className="fas fa-envelope me-2"></i> Hubungi Kami
                                 </Link>
 
-                                {/* Location Map Link */}
-                                {wisata.latitude && wisata.longitude && (
-                                    <a
-                                        href={`https://www.google.com/maps?q=${wisata.latitude},${wisata.longitude}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn-outline-success w-100 rounded-pill py-2 mt-3"
-                                    >
-                                        <i className="fas fa-map-marked-alt me-2"></i> Lihat di Maps
-                                    </a>
-                                )}
+                                <a
+                                    href={SITE_MAPS_URL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn btn-outline-success w-100 rounded-pill py-2 mt-3"
+                                >
+                                    <i className="fas fa-map-marked-alt me-2"></i> Lihat di Maps
+                                </a>
                             </div>
                         </div>
                     </div>

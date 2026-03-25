@@ -11,6 +11,18 @@ function createSlug(text: string): string {
         .trim();
 }
 
+function parseOptionalBoolean(value: boolean | string | undefined): boolean | undefined {
+    if (value === undefined) {
+        return undefined;
+    }
+
+    if (typeof value === "boolean") {
+        return value;
+    }
+
+    return value === "true";
+}
+
 export const articlesRoutes = new Elysia({ prefix: "/articles" })
     // Get all articles with pagination
     .get("/", async ({ query }) => {
@@ -18,17 +30,18 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
             const page = parseInt(query.page || "1");
             const limit = parseInt(query.limit || "10");
             const skip = (page - 1) * limit;
-            const published = query.published !== "false";
+            const includeUnpublished = query.includeUnpublished === "true" || query.published === "false";
+            const where = includeUnpublished ? undefined : { published: true };
 
             const [articles, total] = await Promise.all([
                 prisma.article.findMany({
-                    where: published ? { published: true } : undefined,
+                    where,
                     skip,
                     take: limit,
                     orderBy: { createdAt: "desc" },
                 }),
                 prisma.article.count({
-                    where: published ? { published: true } : undefined,
+                    where,
                 }),
             ]);
 
@@ -65,8 +78,9 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
         }
     })
     // Get article by slug
-    .get("/slug/:slug", async ({ params, set }) => {
+    .get("/slug/:slug", async ({ params, query, set }) => {
         try {
+            const includeUnpublished = query.includeUnpublished === "true";
             const article = await prisma.article.findUnique({
                 where: { slug: params.slug },
                 include: {
@@ -81,7 +95,7 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
                 },
             });
 
-            if (!article) {
+            if (!article || (!includeUnpublished && !article.published)) {
                 set.status = 404;
                 return { success: false, message: "Artikel tidak ditemukan" };
             }
@@ -93,8 +107,9 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
         }
     })
     // Get article by ID
-    .get("/:id", async ({ params, set }) => {
+    .get("/:id", async ({ params, query, set }) => {
         try {
+            const includeUnpublished = query.includeUnpublished === "true";
             const article = await prisma.article.findUnique({
                 where: { id: parseInt(params.id) },
                 include: {
@@ -109,7 +124,7 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
                 },
             });
 
-            if (!article) {
+            if (!article || (!includeUnpublished && !article.published)) {
                 set.status = 404;
                 return { success: false, message: "Artikel tidak ditemukan" };
             }
@@ -146,7 +161,7 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
                         isi: body.isi,
                         ringkasan: body.ringkasan,
                         penulis: body.penulis,
-                        published: body.published ?? false,
+                        published: parseOptionalBoolean(body.published) ?? false,
                         gambar: typeof gambarPath === 'string' ? gambarPath : null,
                     },
                 });
@@ -169,7 +184,7 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
                 isi: t.String({ minLength: 1 }),
                 ringkasan: t.Optional(t.String()),
                 penulis: t.Optional(t.String()),
-                published: t.Optional(t.Boolean()),
+                published: t.Optional(t.Union([t.Boolean(), t.String()])),
                 gambar: t.Optional(t.Union([t.File(), t.String()])),
             }),
         }
@@ -216,7 +231,7 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
                         isi: body.isi,
                         ringkasan: body.ringkasan,
                         penulis: body.penulis,
-                        published: body.published,
+                        published: parseOptionalBoolean(body.published),
                         gambar: typeof gambarPath === 'string' ? gambarPath : undefined,
                     },
                 });
@@ -238,7 +253,7 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
                 isi: t.Optional(t.String()),
                 ringkasan: t.Optional(t.String()),
                 penulis: t.Optional(t.String()),
-                published: t.Optional(t.Boolean()),
+                published: t.Optional(t.Union([t.Boolean(), t.String()])),
                 gambar: t.Optional(t.Union([t.File(), t.String()])),
             }),
         }

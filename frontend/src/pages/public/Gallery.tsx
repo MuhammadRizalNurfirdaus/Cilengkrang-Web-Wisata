@@ -3,12 +3,14 @@ import { useFetch } from "../../hooks/useFetch";
 import { Galeri } from "../../types";
 import { getImageUrl } from "../../api/client";
 import Button from "../../components/ui/Button";
+import { fallbackGalleryItems } from "../../utils/destinationMedia";
 
 export default function Gallery() {
+    const instagramUrl = "https://www.instagram.com/pesona.lembahcilengkrang/";
     const [page, setPage] = useState(1);
     const { data: galleryItems, loading, pagination } = useFetch<Galeri[]>(`/galeri?page=${page}&limit=12`);
 
-    const items = galleryItems || [];
+    const items = galleryItems && galleryItems.length > 0 ? galleryItems : fallbackGalleryItems;
     const totalPages = pagination?.totalPages || 1;
 
     return (
@@ -17,6 +19,14 @@ export default function Gallery() {
                 <div className="text-center mb-5">
                     <h1 className="fw-bold text-success display-5">Galeri Foto</h1>
                     <p className="text-muted lead">Dokumentasi keindahan Lembah Cilengkrang</p>
+                    <a
+                        href={instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline-success rounded-pill px-4 mt-2"
+                    >
+                        <i className="fab fa-instagram me-2"></i>Lihat Instagram Resmi
+                    </a>
                 </div>
 
                 {loading ? (
@@ -30,17 +40,18 @@ export default function Gallery() {
                         <div className="row g-4 mb-5" data-masonry='{"percentPosition": true }'>
                             {items.map((item) => (
                                 <div key={item.id} className="col-md-4 col-lg-3">
-                                    <div className="card border-0 shadow-sm overflow-hidden h-100">
-                                        <img
-                                            src={getImageUrl(item.namaFile)}
-                                            alt={item.keterangan || "Galeri"}
-                                            className="card-img-top object-fit-cover hover-zoom"
-                                            style={{ height: "250px", transition: "transform 0.3s ease" }}
-                                            onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                                            onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
-                                        />
+                                    <div className="media-showcase-card">
+                                        <div className="media-showcase-image-wrap">
+                                            <img
+                                                src={getImageUrl(item.namaFile)}
+                                                alt={item.keterangan || "Galeri"}
+                                                className="media-showcase-image"
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
+                                        </div>
                                         {item.keterangan && (
-                                            <div className="card-body p-2 text-center small text-muted border-top">
+                                            <div className="media-showcase-caption">
                                                 {item.keterangan}
                                             </div>
                                         )}
