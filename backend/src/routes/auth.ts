@@ -4,11 +4,21 @@ import prisma from "../db";
 import { hashPassword, verifyPassword } from "../utils/password";
 import { RequestError } from "../utils/request";
 
+const FRONTEND_URL = (process.env.FRONTEND_URL || "http://localhost:5174").replace(/\/$/, "");
+const DEFAULT_FRONTEND_ORIGIN = new URL(FRONTEND_URL).origin;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
-const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || "http://localhost:5174/auth/google/callback";
 const GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
+const GOOGLE_ALLOWED_ORIGINS = new Set(
+    [
+        DEFAULT_FRONTEND_ORIGIN,
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "http://localhost:5175",
+        "http://127.0.0.1:5175",
+    ].filter(Boolean)
+);
 
 interface GoogleTokenResponse {
     access_token?: string;
@@ -20,6 +30,26 @@ interface GoogleUserProfile {
     email?: string;
     name?: string;
     picture?: string;
+}
+
+function normalizeOrigin(origin?: string | null) {
+    if (!origin) {
+        return undefined;
+    }
+
+    try {
+        return new URL(origin).origin;
+    } catch {
+        return undefined;
+    }
+}
+
+function getGoogleRedirectUri(request: Request) {
+    const requestOrigin = normalizeOrigin(request.headers.get("origin"));
+    const allowedOrigin =
+        requestOrigin && GOOGLE_ALLOWED_ORIGINS.has(requestOrigin) ? requestOrigin : DEFAULT_FRONTEND_ORIGIN;
+
+    return `${allowedOrigin}/auth/google/callback`;
 }
 
 function assertGoogleOAuthConfigured() {
@@ -36,13 +66,14 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         })
     )
     // --- Google OAuth Endpoints ---
-    .get("/google/url", ({ set }) => {
+    .get("/google/url", ({ request, set }) => {
         try {
             assertGoogleOAuthConfigured();
+            const redirectUri = getGoogleRedirectUri(request);
 
             const params = new URLSearchParams({
                 client_id: GOOGLE_CLIENT_ID,
-                redirect_uri: GOOGLE_REDIRECT_URI,
+                redirect_uri: redirectUri,
                 response_type: "code",
                 scope: "openid email profile",
                 access_type: "offline",
@@ -51,7 +82,10 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
 
             return {
                 success: true,
-                data: { url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}` },
+                data: {
+                    url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+                    redirectUri,
+                },
             };
         } catch (error) {
             if (error instanceof RequestError) {
@@ -66,10 +100,11 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
     })
     .post(
         "/google/callback",
-        async ({ body, jwt, set }) => {
+        async ({ body, jwt, request, set }) => {
             try {
                 assertGoogleOAuthConfigured();
                 const { code } = body;
+                const redirectUri = getGoogleRedirectUri(request);
 
                 const tokenResponse = await fetch(GOOGLE_TOKEN_URL, {
                     method: "POST",
@@ -80,7 +115,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
                         code,
                         client_id: GOOGLE_CLIENT_ID,
                         client_secret: GOOGLE_CLIENT_SECRET,
-                        redirect_uri: GOOGLE_REDIRECT_URI,
+                        redirect_uri: redirectUri,
                         grant_type: "authorization_code",
                     }),
                 });

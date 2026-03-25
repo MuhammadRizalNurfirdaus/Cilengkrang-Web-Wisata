@@ -95,8 +95,19 @@ export default function Login() {
         setGoogleLoading(true);
         setError(null);
         try {
-            const response = await fetchApi<{ success: boolean; data: { url: string } }>("/auth/google/url");
+            const response = await fetchApi<{ success: boolean; data: { url: string; redirectUri: string } }>("/auth/google/url");
             if (response.success && response.data?.url) {
+                const currentOrigin = window.location.origin;
+                const redirectOrigin = new URL(response.data.redirectUri).origin;
+
+                if (redirectOrigin !== currentOrigin) {
+                    setError(
+                        `Google login saat ini diarahkan ke ${response.data.redirectUri}. Buka aplikasi dari ${redirectOrigin} atau samakan konfigurasi FRONTEND_URL dan GOOGLE_REDIRECT_URI.`
+                    );
+                    setGoogleLoading(false);
+                    return;
+                }
+
                 window.location.href = response.data.url;
             } else {
                 setError("Gagal mendapatkan URL Google login");

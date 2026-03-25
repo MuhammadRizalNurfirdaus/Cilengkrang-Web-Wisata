@@ -19,6 +19,7 @@ Update terbaru yang sudah diterapkan pada codebase ini:
 
 - Stabilitas backend ditingkatkan pada alur autentikasi, validasi pemesanan tiket, validasi jadwal, dan upload foto profil.
 - Integrasi Google OAuth diperbaiki agar token exchange lebih aman dan error handling lebih jelas saat kredensial belum dikonfigurasi.
+- Field password pada halaman login dan register kini memiliki tombol toggle (ikon mata) untuk menampilkan/menyembunyikan password agar input lebih nyaman dan minim typo.
 - Data lokasi resmi Lembah Cilengkrang sudah diselaraskan ke alamat:
   `Jl. Pejambon, Pajambon, Kecamatan Kramatmulya, Kabupaten Kuningan, Jawa Barat 45553`
 - Tombol peta publik sekarang mengarah ke lokasi resmi:
@@ -26,6 +27,14 @@ Update terbaru yang sudah diterapkan pada codebase ini:
 - Halaman detail destinasi kini lebih rapi, parser fasilitas lebih aman, dan tombol `Lihat di Maps` konsisten di detail, kontak, dan footer.
 - Halaman kontak didesain ulang agar lebih presisi, konsisten di light/dark mode, dan lebih nyaman dipakai di desktop maupun mobile.
 - Fallback gambar destinasi dan galeri kini memakai aset lokal beresolusi lebih tinggi agar tampilan visual lebih tajam dan profesional.
+- Panel admin ditingkatkan dengan tampilan dashboard yang lebih modern, termasuk:
+  - ringkasan keuangan 30 hari
+  - grafik tren pendapatan 6 bulan
+  - performa harian 7 hari
+  - komposisi status pesanan
+  - ranking destinasi terlaris berbasis revenue
+- Halaman admin `Kelola Galeri` yang sebelumnya placeholder kini menampilkan data foto galeri aktual beserta metrik ringkas.
+- Halaman admin `Kelola Wisata` dan `Kelola Artikel` kini menampilkan thumbnail foto yang lebih baik dengan fallback gambar berkualitas tinggi.
 - Validasi terbaru yang sudah dijalankan:
   - `frontend: npm run lint`
   - `frontend: npm run build`
@@ -40,6 +49,7 @@ Update terbaru yang sudah diterapkan pada codebase ini:
 - Galeri foto wisata
 - Form kontak
 - Autentikasi JWT (register/login/me)
+- Toggle tampilkan/sembunyikan password pada form login dan register
 - Google OAuth login (opsional)
 - Pemesanan tiket dengan detail item tiket
 - Manajemen pembayaran
@@ -47,6 +57,7 @@ Update terbaru yang sudah diterapkan pada codebase ini:
 - Manajemen sewa alat
 - Feedback/rating pengunjung
 - Dashboard statistik admin dan user
+- Insight keuangan admin (tren pendapatan, pertumbuhan order, status pesanan, destinasi terlaris)
 - Panel manajemen user, wisata, artikel, galeri
 - Upload file gambar (profil, artikel, galeri, wisata)
 - Theme mode (light/dark) di frontend
@@ -66,7 +77,7 @@ Service default dari `docker-compose.yml`:
 
 - `db`: MariaDB 10.11, host port `3307`
 - `backend`: Bun + Elysia, host port `3002` (container `3001`)
-- `frontend`: Vite app, host port `5174` (container `5173`)
+- `frontend`: Vite app, host port `5174` (container `5174`)
 - `adminer`: UI database, host port `8080`
 
 ## Tech Stack dan Versi
@@ -268,7 +279,9 @@ npm install
 npm run dev
 ```
 
-Frontend default berjalan di `http://localhost:5173`.
+Frontend default berjalan di `http://localhost:5174`.
+
+Jika port `5174` sedang dipakai, Vite local dev akan otomatis pindah ke port berikutnya, biasanya `http://localhost:5175`.
 
 ### Alternatif dari root project
 
@@ -542,6 +555,27 @@ Periksa nilai:
 - `FRONTEND_URL`
 
 Lalu cocokkan dengan konfigurasi OAuth app di Google Cloud Console.
+
+Untuk konfigurasi default project ini, nilai yang harus terdaftar di Google Cloud adalah:
+
+- Authorized JavaScript origin: `http://localhost:5174`
+- Authorized redirect URI: `http://localhost:5174/auth/google/callback`
+
+Jika Anda menjalankan frontend lokal saat `5174` sedang dipakai Docker, tambahkan juga:
+
+- Authorized JavaScript origin: `http://localhost:5175`
+- Authorized redirect URI: `http://localhost:5175/auth/google/callback`
+
+Jika Anda memakai port frontend kustom di luar `5174` atau `5175`, Anda harus mengubah ketiga tempat ini secara bersamaan:
+
+- `FRONTEND_URL`
+- `GOOGLE_REDIRECT_URI`
+- konfigurasi OAuth client di Google Cloud
+
+Catatan:
+
+- Backend akan memakai origin frontend yang aktif untuk alur Google OAuth selama origin tersebut termasuk origin lokal yang diizinkan.
+- `FRONTEND_URL` tetap dipakai sebagai fallback utama jika request tidak membawa origin yang valid.
 
 ### 6. Link peta atau data lokasi belum berubah
 

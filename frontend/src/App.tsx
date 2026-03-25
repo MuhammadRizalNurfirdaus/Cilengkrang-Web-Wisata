@@ -29,6 +29,7 @@ import AdminArticleList from "./pages/admin/articles/AdminArticleList";
 import AdminArticleForm from "./pages/admin/articles/AdminArticleForm";
 import AdminTicketList from "./pages/admin/tickets/AdminTicketList";
 import AdminUserList from "./pages/admin/users/AdminUserList";
+import AdminGalleryList from "./pages/admin/gallery/AdminGalleryList";
 
 import History from "./pages/user/History";
 import Profile from "./pages/user/Profile";
@@ -142,7 +143,7 @@ function App() {
         <Route path="articles/edit/:id" element={<AdminArticleForm />} />
         <Route path="tickets" element={<AdminTicketList />} />
         <Route path="users" element={<AdminUserList />} />
-        <Route path="galeri" element={<AdminGaleriPlaceholder />} />
+        <Route path="galeri" element={<AdminGalleryList />} />
         <Route path="feedback" element={<AdminFeedbackPlaceholder />} />
         <Route path="profile" element={<Profile />} />
       </Route>
@@ -181,17 +182,6 @@ function App() {
    ================================ */
 
 // Admin placeholders
-const AdminGaleriPlaceholder = () => (
-  <div>
-    <h2 className="fw-bold mb-2">Kelola Galeri</h2>
-    <p className="text-muted mb-4">Upload dan kelola foto galeri wisata.</p>
-    <div className="card border-0 shadow-sm p-5 text-center text-muted">
-      <i className="fas fa-images fa-3x mb-3 opacity-50"></i>
-      <p>Fitur galeri sedang dalam pengembangan.</p>
-    </div>
-  </div>
-);
-
 const AdminFeedbackPlaceholder = () => (
   <div>
     <h2 className="fw-bold mb-2">Feedback Pengunjung</h2>

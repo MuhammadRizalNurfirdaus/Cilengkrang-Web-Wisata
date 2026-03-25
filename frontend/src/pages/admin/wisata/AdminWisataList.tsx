@@ -6,6 +6,7 @@ import { getImageUrl, fetchApi } from "../../../api/client";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
 import { getErrorMessage } from "../../../utils/error";
+import { getAdminWisataImage } from "../../../utils/adminMedia";
 
 export default function AdminWisataList() {
     const [page, setPage] = useState(1);
@@ -66,14 +67,19 @@ export default function AdminWisataList() {
                                         <td className="px-4 text-muted">{(page - 1) * 10 + idx + 1}</td>
                                         <td className="px-4">
                                             <img
-                                                src={getImageUrl(wisata.gambar)}
+                                                src={getImageUrl(getAdminWisataImage(wisata))}
                                                 alt={wisata.nama}
-                                                className="rounded shadow-sm object-fit-cover"
-                                                width="60"
-                                                height="40"
+                                                className="rounded-3 shadow-sm object-fit-cover admin-thumb-image"
+                                                width="96"
+                                                height="64"
+                                                loading="lazy"
+                                                decoding="async"
                                             />
                                         </td>
-                                        <td className="px-4 fw-medium">{wisata.nama}</td>
+                                        <td className="px-4">
+                                            <div className="fw-semibold">{wisata.nama}</div>
+                                            <small className="text-muted">{wisata.lokasi || "Lokasi belum diatur"}</small>
+                                        </td>
                                         <td className="px-4">
                                             <span className={`badge ${wisata.aktif ? "bg-success" : "bg-secondary"}`}>
                                                 {wisata.aktif ? "Aktif" : "Nonaktif"}

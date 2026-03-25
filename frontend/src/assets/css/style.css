@@ -28,6 +28,215 @@
   background-color: rgba(25, 135, 84, 0.03);
 }
 
+.admin-dashboard-page {
+  position: relative;
+}
+
+.admin-finance-hero {
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 10%, rgba(167, 243, 208, 0.25), transparent 28%),
+    linear-gradient(145deg, #065f46 0%, #0f766e 50%, #1d4ed8 100%);
+}
+
+.admin-finance-kicker {
+  letter-spacing: 0.12em;
+  opacity: 0.9;
+}
+
+.admin-finance-metrics {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-finance-metric {
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.admin-finance-metric span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.82rem;
+}
+
+.admin-finance-metric strong {
+  color: #ffffff;
+  font-size: 1.02rem;
+}
+
+.admin-growth-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.admin-line-chart-wrap {
+  height: 190px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  background:
+    linear-gradient(to bottom, rgba(16, 185, 129, 0.08), transparent),
+    var(--body-bg);
+  padding: 1rem;
+}
+
+.admin-line-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.admin-mini-stat {
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  padding: 0.7rem 0.85rem;
+  background-color: var(--body-bg);
+}
+
+.admin-progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background-color: rgba(148, 163, 184, 0.24);
+  overflow: hidden;
+}
+
+.admin-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #10b981, #0ea5e9);
+}
+
+.admin-daily-bars {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.admin-daily-bar-item {
+  text-align: center;
+}
+
+.admin-daily-bar-track {
+  height: 140px;
+  border-radius: 12px;
+  background-color: rgba(148, 163, 184, 0.16);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 6px;
+}
+
+.admin-daily-bar-fill {
+  width: 100%;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #34d399, #059669);
+  min-height: 0;
+}
+
+.admin-top-destination {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  background-color: var(--body-bg);
+}
+
+.admin-rank-badge {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #0ea5e9, #10b981);
+}
+
+.admin-thumb-image {
+  border: 1px solid var(--border-color);
+}
+
+.admin-gallery-hero {
+  position: relative;
+  min-height: 280px;
+}
+
+.admin-gallery-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-height: 280px;
+}
+
+.admin-gallery-hero-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 1.25rem;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.25));
+  color: #fff;
+}
+
+.admin-gallery-metrics {
+  background: linear-gradient(160deg, rgba(37, 99, 235, 0.12), rgba(16, 185, 129, 0.08));
+}
+
+.admin-metric-tile {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.admin-metric-label {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.admin-metric-value {
+  color: var(--body-color);
+  font-weight: 700;
+  font-size: 1.45rem;
+  line-height: 1.25;
+}
+
+.admin-metric-date {
+  font-size: 1.05rem;
+}
+
+.admin-gallery-card-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.admin-gallery-card:hover .admin-gallery-card-image {
+  transform: scale(1.03);
+  transition: transform 0.3s ease;
+}
+
+.admin-gallery-caption {
+  min-height: 44px;
+}
+
+.text-white-75 {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
 /* ==========================================================================
    Root Variables (Default / Light Mode - Tema Alam)
    ========================================================================== */
@@ -727,6 +936,18 @@ body:not(.dark-mode) .navbar-public.navbar-transparent-on-top .btn.btn-warning:h
   box-shadow: 0 0 0 0.25rem rgba(var(--focus-ring-color-rgb), var(--focus-ring-opacity)); /* Menggunakan variabel RGB dan opacity */
   background-color: var(--element-bg); /* Menggunakan variabel root */
   transform: scale(1.01);
+}
+.password-toggle-btn {
+  cursor: pointer;
+  background-color: var(--element-bg);
+  user-select: none;
+}
+.password-toggle-btn:hover,
+.password-toggle-btn:focus {
+  color: var(--primary-color);
+}
+.password-toggle-btn:focus {
+  box-shadow: none;
 }
 textarea.form-control {
   min-height: 120px;
@@ -2330,6 +2551,15 @@ body.dark-mode .contact-form-panel .form-label {
   .hero h1 { font-size: clamp(2.2rem, 5.5vw, 3.8rem); }
   .hero p.lead { font-size: clamp(1rem, 2.2vw, 1.25rem); }
   .section-title { font-size: clamp(1.7rem, 4.5vw, 2.5rem); }
+  .admin-daily-bars {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .admin-daily-bar-track {
+    height: 110px;
+  }
+  .admin-finance-metric strong {
+    font-size: 0.95rem;
+  }
   .contact-page {
     padding-top: 6rem;
   }
@@ -2348,6 +2578,18 @@ body.dark-mode .contact-form-panel .form-label {
   .card-img-top { height: 200px; }
   .btn { padding: 0.7rem 1.5rem; font-size: 0.9rem; }
   .gallery-item img { height: 220px; }
+  .admin-daily-bars {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .admin-growth-chip {
+    font-size: 0.75rem;
+  }
+  .admin-gallery-hero {
+    min-height: 220px;
+  }
+  .admin-gallery-hero-image {
+    min-height: 220px;
+  }
   .contact-title {
     font-size: clamp(2rem, 8vw, 3rem);
   }
@@ -2391,9 +2633,21 @@ body.dark-mode .contact-form-panel .form-label {
         height: 10px;
     }
      #testimonialCarousel .carousel-control-prev-icon,
-    #testimonialCarousel .carousel-control-next-icon {
+     #testimonialCarousel .carousel-control-next-icon {
         padding: 10px;
         background-size: 50%;
+  }
+  .admin-daily-bars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-line-chart-wrap {
+    height: 160px;
+  }
+  .admin-gallery-card-image {
+    aspect-ratio: 1 / 1;
+  }
+  .admin-metric-value {
+    font-size: 1.2rem;
   }
   .contact-page {
     padding-top: 5.5rem;

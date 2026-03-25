@@ -1,5 +1,6 @@
 # Backend Dockerfile
-FROM oven/bun:1.0
+# Prisma 7 membutuhkan runtime setara Node.js 20.19+ di dalam container.
+FROM oven/bun:1
 
 WORKDIR /app
 

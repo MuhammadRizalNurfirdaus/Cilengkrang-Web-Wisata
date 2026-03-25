@@ -6,6 +6,7 @@ import { getImageUrl, fetchApi } from "../../../api/client";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
 import { getErrorMessage } from "../../../utils/error";
+import { getAdminArticleImage } from "../../../utils/adminMedia";
 
 export default function AdminArticleList() {
     const [page, setPage] = useState(1);
@@ -67,21 +68,29 @@ export default function AdminArticleList() {
                                         <td className="px-4 text-muted">{(page - 1) * 10 + idx + 1}</td>
                                         <td className="px-4">
                                             <img
-                                                src={getImageUrl(article.gambar)}
+                                                src={getImageUrl(getAdminArticleImage(article))}
                                                 alt={article.judul}
-                                                className="rounded shadow-sm object-fit-cover"
-                                                width="60"
-                                                height="40"
+                                                className="rounded-3 shadow-sm object-fit-cover admin-thumb-image"
+                                                width="96"
+                                                height="64"
+                                                loading="lazy"
+                                                decoding="async"
                                             />
                                         </td>
-                                        <td className="px-4 fw-medium text-wrap" style={{ maxWidth: "300px" }}>{article.judul}</td>
+                                        <td className="px-4 fw-medium text-wrap" style={{ maxWidth: "360px" }}>
+                                            {article.judul}
+                                        </td>
                                         <td className="px-4">
                                             <span className={`badge ${article.published ? "bg-success" : "bg-secondary"}`}>
                                                 {article.published ? "Published" : "Draft"}
                                             </span>
                                         </td>
                                         <td className="px-4 text-muted small">
-                                            {new Date(article.createdAt).toLocaleDateString()}
+                                            {new Date(article.createdAt).toLocaleDateString("id-ID", {
+                                                day: "2-digit",
+                                                month: "short",
+                                                year: "numeric",
+                                            })}
                                         </td>
                                         <td className="px-4">
                                             <div className="d-flex gap-2">
